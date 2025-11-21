@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FAQ - PijamaChicStyle 🩸🦋</title>
+    <style>
+        /* Page 1 Styles */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 40px;
+            font-weight: 300;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 15px;
+        }
+        .faq-item {
+            margin-bottom: 25px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 20px;
+        }
+        .faq-question {
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-question::after {
+            content: '+';
+            font-size: 1.5em;
+            color: #95a5a6;
+        }
+        .faq-answer {
+            color: #555;
+            line-height: 1.6;
+            display: none;
+        }
+        .faq-answer.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Foire Aux Questions</h1>
+
+        <div class="faq-item">
+            <div class="faq-question">Quelles sont les options de livraison et les délais ?</div>
+            <div class="faq-answer">
+                Nous proposons plusieurs modes de livraison pour vous servir au mieux :
+                <ul>
+                    <li><strong>Livraison Standard :</strong> Délai de 3 à 5 jours ouvrables. </li>
+                    <li><strong>Livraison Express :</strong> Délai de 24 à 48 heures. Des frais supplémentaires s'appliquent.</li>
+                    <li><strong>Click & Collect :</strong> Retrait gratuit en magasin sous 2 heures.</li>
+                </ul>
+                Tous nos colis sont expédiés avec un numéro de suivi que vous recevrez par WhatsApp dès l'expédition.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">Où se trouve votre magasin physique ?</div>
+            <div class="faq-answer">
+                Notre boutique physique est située au <strong>maarif rue atlass numéro 61, Casablanca</strong>. Nous sommes ouverts du mardi au dimanche de 9h à 21h. <a href="contact.html" style="color: #3498db;">"Nous Contacter"</a>.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">Comment évaluez-vous le rapport qualité-prix de vos produits ?</div>
+            <div class="faq-answer">
+                Nous sommes profondément engagés envers une qualité exceptionnelle. Notre philosophie est de vous proposer des articles alliant un design intemporel, des matériaux soigneusement sélectionnés, le tout à un prix juste. Nous travaillons directement avec nos ateliers partenaires pour supprimer les intermédiaires et vous garantir le meilleur rapport qualité-prix possible, sans compromis sur la qualité.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">Quels sont les modes de paiement acceptés ?</div>
+            <div class="faq-answer">
+                Pour votre commodité, nous acceptons les moyens de paiement suivants :
+                <ul>
+                    <li>COD (paiement au livraison)</li>
+                    <li>Virements bancaires</li>
+                    <li>Chèques (un délai de traitement supplémentaire est nécessaire pour la validation)</li>
+                </ul>
+                
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question">Proposez-vous des collections saisonnières ?</div>
+            <div class="faq-answer">
+                Oui, nous renouvelons nos collections au rythme des saisons pour vous offrir des pièces adaptées et tendance. Nous lançons ainsi des collections Printemps/Été et Automne/Hiver. De plus, nous proposons tout au long de l'année des "capsules" et des pièces intemporelles qui ne sont pas soumises à la saisonnalité, vous permettant de constituer une garde-robe durable. Inscrivez-vous à notre newsletter pour être informé en avant-première des nouvelles arrivages.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple JavaScript to toggle FAQ answers
+        document.querySelectorAll('.faq-question').forEach(question => {
+            question.addEventListener('click', () => {
+                const answer = question.nextElementSibling;
+                answer.classList.toggle('show');
+                
+                // Change the + to - when open
+                if (answer.classList.contains('show')) {
+                    question.textContent = question.textContent.slice(0, -1) + '−';
+                } else {
+                    question.textContent = question.textContent.slice(0, -1) + '+';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

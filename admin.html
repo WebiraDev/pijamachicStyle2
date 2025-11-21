@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Pijama Chic Style</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #8a1c1c;
+            --secondary: #ac0404;
+            --accent: #3498db;
+            --light: #ecf0f1;
+            --dark: #343232;
+            --gray: #95a5a6;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+
+        body {
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px 0;
+        }
+
+        /* Access Denied Section */
+        .access-denied {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, #1a252f 100%);
+            color: white;
+            text-align: center;
+        }
+
+        .access-denied-content {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 40px;
+            backdrop-filter: blur(10px);
+        }
+
+        .access-denied h1 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .access-denied p {
+            font-size: 18px;
+            margin-bottom: 30px;
+        }
+
+        /* Login Section */
+        .login-section {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary) 0%, #1a252f 100%);
+        }
+
+        .login-container {
+            background-color: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+            font-size: 28px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .login-btn:hover {
+            background-color: #1a252f;
+        }
+
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+
+        /* Admin Panel */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .admin-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-size: 28px;
+            color: var(--primary);
+        }
+
+        .admin-title span {
+            color: var(--secondary);
+        }
+
+        .logout-btn {
+            padding: 10px 20px;
+            background-color: var(--danger);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background-color 0.3s;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Admin Content */
+        .admin-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 768px) {
+            .admin-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .admin-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-title {
+            font-size: 22px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+        }
+
+        /* Add Product Form */
+        .add-product-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        @media (max-width: 480px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            background-color: white;
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            border-radius: 4px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--primary);
+        }
+
+        .file-upload i {
+            font-size: 48px;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .image-preview {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: 4px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--success);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .submit-btn:hover {
+            background-color: #219653;
+        }
+
+        /* Products List */
+        .products-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .product-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            transition: background-color 0.3s;
+        }
+
+        .product-item:hover {
+            background-color: #f9f9f9;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 4px;
+            margin-right: 15px;
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .product-price {
+            color: var(--secondary);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .product-category {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .product-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .edit-btn, .delete-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+        }
+
+        .edit-btn {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .edit-btn:hover {
+            background-color: #e67e22;
+        }
+
+        .delete-btn {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .delete-btn:hover {
+            background-color: #c0392b;
+        }
+
+        /* Orders Section */
+        .orders-section {
+            grid-column: 1 / -1;
+        }
+
+        .orders-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .order-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .order-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .order-id {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .order-date {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .order-customer {
+            margin-bottom: 10px;
+        }
+
+        .order-items {
+            margin-bottom: 10px;
+        }
+
+        .order-item-product {
+            display: flex;
+            justify-content: space-between;
+            padding: 5px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .order-total {
+            text-align: right;
+            font-weight: 600;
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        /* Comments Section */
+        .comments-section {
+            grid-column: 1 / -1;
+        }
+
+        .comments-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .comment-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            margin-bottom: 15px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        .comment-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .comment-customer {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .comment-date {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .comment-text {
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        .comment-rating {
+            color: var(--warning);
+        }
+
+        /* Stats Section */
+        .stats-section {
+            grid-column: 1 / -1;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        /* Success Message */
+        .success-message {
+            background-color: var(--success);
+            color: white;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            text-align: center;
+            display: none;
+        }
+
+        /* Edit Product Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal-container {
+            background-color: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .close-modal {
+            font-size: 24px;
+            color: var(--dark);
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .update-btn {
+            flex: 1;
+            padding: 12px;
+            background-color: var(--success);
+            color: white;
+            border: none;
+                border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .cancel-btn {
+            flex: 1;
+            padding: 12px;
+            background-color: var(--gray);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- Access Denied Section -->
+    <section class="access-denied" id="access-denied">
+        <div class="access-denied-content">
+            <h1>Accès Refusé</h1>
+            <p>Cette page est réservée aux administrateurs autorisés uniquement.</p>
+            <p>Si vous êtes un administrateur, contactez le développeur pour obtenir l'accès.</p>
+        </div>
+    </section>
+
+    <!-- Login Section -->
+    <section class="login-section" id="login-section">
+        <div class="login-container">
+            <h2 class="login-title">Connexion d'admin</h2>
+            <form id="login-form">
+                <div class="form-group">
+                    <label for="admin-username">Nom d'utilisateur</label>
+                    <input type="text" id="admin-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="admin-password">Mot de passe</label>
+                    <input type="password" id="admin-password" required>
+                </div>
+                <button type="submit" class="login-btn">Se connecter</button>
+                <div class="error-message" id="login-error">Nom d'utilisateur ou mot de passe incorrect</div>
+            </form>
+        </div>
+    </section>
+
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="admin-panel">
+        <header class="admin-header">
+            <div class="container admin-nav">
+                <h1 class="admin-title">Pijama<span>ChicStyle</span> Admin</h1>
+                <button class="logout-btn" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i> Déconnexion
+                </button>
+            </div>
+        </header>
+
+        <div class="container">
+            <div class="success-message" id="success-message"></div>
+
+            <div class="admin-content">
+                <!-- Add Product Section -->
+                <section class="admin-section">
+                    <h2 class="section-title">Ajouter un Produit</h2>
+                    <form class="add-product-form" id="add-product-form">
+                        <div class="form-group">
+                            <label for="product-name">Nom du produit</label>
+                            <input type="text" id="product-name" required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="product-price">Prix (MAD)</label>
+                                <input type="number" id="product-price" step="0.01" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="product-category">Catégorie</label>
+                                <select id="product-category" required>
+                                    <option value="">Sélectionner une catégorie</option>
+                                    <option value="vetements">Vêtements</option>
+                                    <option value="sandales">Sandales</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-collection">Collection</label>
+                            <select id="product-collection" required>
+                                <option value="">Sélectionner une collection</option>
+                                <option value="pyjamas">Pyjamas</option>
+                                <option value="gilets">Gilets</option>
+                                <option value="peignoirs">Peignoirs</option>
+                                <option value="survetements">Survêtements</option>
+                                <option value="sandales">Sandales</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-description">Description</label>
+                            <textarea id="product-description" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Image du produit</label>
+                            <div class="file-upload" id="file-upload">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Cliquez pour télécharger une image</p>
+                                <input type="file" id="product-image" accept="image/*" required>
+                            </div>
+                            <div class="image-preview" id="image-preview"></div>
+                        </div>
+                        <button type="submit" class="submit-btn">Ajouter le produit</button>
+                    </form>
+                </section>
+
+                <!-- Products List Section -->
+                <section class="admin-section">
+                    <h2 class="section-title">Gérer les Produits</h2>
+                    <div class="products-list" id="products-list">
+                        <!-- Products will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Stats Section -->
+                <section class="admin-section stats-section">
+                    <h2 class="section-title">Statistiques</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-products">0</div>
+                            <div class="stat-label">Produits Totaux</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-orders">0</div>
+                            <div class="stat-label">Commandes Totales</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="total-revenue">0 MAD</div>
+                            <div class="stat-label">Revenu Total</div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Orders Section -->
+                <section class="admin-section orders-section">
+                    <h2 class="section-title">Commandes Récentes</h2>
+                    <div class="orders-list" id="orders-list">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Comments Section -->
+                <section class="admin-section comments-section">
+                    <h2 class="section-title">Commentaires des Clients</h2>
+                    <div class="comments-list" id="comments-list">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal-overlay" id="edit-modal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title">Modifier le Produit</h3>
+                <button class="close-modal" id="close-edit-modal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="edit-product-form">
+                <input type="hidden" id="edit-product-id">
+                <div class="form-group">
+                    <label for="edit-product-name">Nom du produit</label>
+                    <input type="text" id="edit-product-name" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="edit-product-price">Prix (MAD)</label>
+                        <input type="number" id="edit-product-price" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-product-category">Catégorie</label>
+                        <select id="edit-product-category" required>
+                            <option value="vetements">Vêtements</option>
+                            <option value="sandales">Sandales</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-collection">Collection</label>
+                    <select id="edit-product-collection" required>
+                        <option value="pyjamas">Pyjamas</option>
+                        <option value="gilets">Gilets</option>
+                        <option value="peignoirs">Peignoirs</option>
+                        <option value="survetements">Survêtements</option>
+                        <option value="sandales">Sandales</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="edit-product-description">Description</label>
+                    <textarea id="edit-product-description" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Image du produit</label>
+                    <div class="file-upload" id="edit-file-upload">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Cliquez pour changer l'image</p>
+                        <input type="file" id="edit-product-image" accept="image/*">
+                    </div>
+                    <div class="image-preview" id="edit-image-preview"></div>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="update-btn">Mettre à jour</button>
+                    <button type="button" class="cancel-btn" id="cancel-edit">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Admin credentials
+        const ADMIN_USERNAME = "15112025";
+        const ADMIN_PASSWORD = "pijamasoukainachic2025";
+
+      
+        // DOM Elements
+        const accessDenied = document.getElementById('access-denied');
+        const loginSection = document.getElementById('login-section');
+        const adminPanel = document.getElementById('admin-panel');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        const addProductForm = document.getElementById('add-product-form');
+        const productsList = document.getElementById('products-list');
+        const ordersList = document.getElementById('orders-list');
+        const commentsList = document.getElementById('comments-list');
+        const successMessage = document.getElementById('success-message');
+        const editModal = document.getElementById('edit-modal');
+        const closeEditModal = document.getElementById('close-edit-modal');
+        const cancelEdit = document.getElementById('cancel-edit');
+        const editProductForm = document.getElementById('edit-product-form');
+        const fileUpload = document.getElementById('file-upload');
+        const productImageInput = document.getElementById('product-image');
+        const imagePreview = document.getElementById('image-preview');
+        const editFileUpload = document.getElementById('edit-file-upload');
+        const editProductImageInput = document.getElementById('edit-product-image');
+        const editImagePreview = document.getElementById('edit-image-preview');
+
+        // Stats elements
+        const totalProducts = document.getElementById('total-products');
+        const totalOrders = document.getElementById('total-orders');
+        const totalRevenue = document.getElementById('total-revenue');
+
+        // Initialize - Always show login first
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAdmin();
+        });
+
+        // Initialize admin panel
+        function initializeAdmin() {
+            const isLoggedIn = localStorage.getItem('admin-logged-in');
+            
+            if (isLoggedIn === 'true') {
+                showAdminPanel();
+            } else {
+                showLoginSection();
+            }
+            
+            // Log IP for monitoring (but don't block access)
+            logIP();
+        }
+
+        // Log IP for monitoring (optional)
+        async function logIP() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                const userIP = data.ip;
+                
+                console.log('Admin access attempt from IP:', userIP);
+                
+                // You can log this to a server or analytics service
+                // For now, we'll just log to console
+                if (ALLOWED_IPS.includes(userIP)) {
+                    console.log('✅ Known admin IP');
+                } else {
+                    console.log('⚠️ Unknown IP - monitoring access');
+                }
+            } catch (error) {
+                console.log('IP detection failed - proceeding with login');
+            }
+        }
+
+        function showAccessDenied() {
+            accessDenied.style.display = 'flex';
+            loginSection.style.display = 'none';
+            adminPanel.style.display = 'none';
+        }
+
+        function showLoginSection() {
+            accessDenied.style.display = 'none';
+            loginSection.style.display = 'flex';
+            adminPanel.style.display = 'none';
+        }
+
+        function showAdminPanel() {
+            accessDenied.style.display = 'none';
+            loginSection.style.display = 'none';
+            adminPanel.style.display = 'block';
+            loadProducts();
+            loadOrders();
+            loadComments();
+            updateStats();
+        }
+
+        // Login form submission
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                localStorage.setItem('admin-logged-in', 'true');
+                showAdminPanel();
+            } else {
+                loginError.style.display = 'block';
+            }
+        });
+
+        // Logout functionality
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('admin-logged-in');
+            showLoginSection();
+            loginForm.reset();
+        });
+
+        // File upload functionality
+        fileUpload.addEventListener('click', function() {
+            productImageInput.click();
+        });
+
+        productImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    imagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        editFileUpload.addEventListener('click', function() {
+            editProductImageInput.click();
+        });
+
+        editProductImageInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    editImagePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Load products from localStorage
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            productsList.innerHTML = '';
+            
+            if (products.length === 0) {
+                productsList.innerHTML = '<p>Aucun produit trouvé.</p>';
+                return;
+            }
+            
+            products.forEach(product => {
+                const productItem = document.createElement('div');
+                productItem.className = 'product-item';
+                productItem.innerHTML = `
+                    <div class="product-image" style="background-image: url('${product.image}')"></div>
+                    <div class="product-details">
+                        <div class="product-name">${product.name}</div>
+                        <div class="product-price">${product.price} MAD</div>
+                        <div class="product-category">${product.category} | ${product.collection}</div>
+                    </div>
+                    <div class="product-actions">
+                        <button class="edit-btn" data-id="${product.id}">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="delete-btn" data-id="${product.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+                productsList.appendChild(productItem);
+            });
+            
+            // Add event listeners for edit and delete buttons
+            document.querySelectorAll('.edit-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    openEditModal(productId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const productId = parseInt(this.getAttribute('data-id'));
+                    deleteProduct(productId);
+                });
+            });
+        }
+
+        // Load orders from localStorage
+        function loadOrders() {
+            const orders = JSON.parse(localStorage.getItem('pijamachic-orders')) || [];
+            ordersList.innerHTML = '';
+            
+            if (orders.length === 0) {
+                ordersList.innerHTML = '<p>Aucune commande trouvée.</p>';
+                return;
+            }
+            
+            // Show only recent orders (last 5)
+            const recentOrders = orders.slice(-5).reverse();
+            
+            recentOrders.forEach(order => {
+                const orderItem = document.createElement('div');
+                orderItem.className = 'order-item';
+                
+                const orderDate = new Date(order.date).toLocaleDateString('fr-FR');
+                const orderTime = new Date(order.date).toLocaleTimeString('fr-FR');
+                
+                let itemsHTML = '';
+                order.items.forEach(item => {
+                    itemsHTML += `
+                        <div class="order-item-product">
+                            <span>${item.name} (${item.quantity}x)</span>
+                            <span>${(item.price * item.quantity).toFixed(2)} MAD</span>
+                        </div>
+                    `;
+                });
+                
+                orderItem.innerHTML = `
+                    <div class="order-header">
+                        <div class="order-id">Commande #${order.id}</div>
+                        <div class="order-date">${orderDate} à ${orderTime}</div>
+                    </div>
+                    <div class="order-customer">
+                        <strong>${order.customer.name}</strong><br>
+                        ${order.customer.phone}<br>
+                        ${order.customer.address}
+                    </div>
+                    <div class="order-items">
+                        ${itemsHTML}
+                    </div>
+                    <div class="order-total">Total: ${order.total.toFixed(2)} MAD</div>
+                `;
+                ordersList.appendChild(orderItem);
+            });
+        }
+
+        // Load comments from localStorage (from contact page)
+        function loadComments() {
+            const comments = JSON.parse(localStorage.getItem('pijamachic-contact-messages')) || [];
+            commentsList.innerHTML = '';
+            
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<p>Aucun commentaire trouvé.</p>';
+                return;
+            }
+            
+            comments.forEach(comment => {
+                const commentItem = document.createElement('div');
+                commentItem.className = 'comment-item';
+                
+                const commentDate = new Date(comment.date || Date.now()).toLocaleDateString('fr-FR');
+                
+                commentItem.innerHTML = `
+                    <div class="comment-header">
+                        <div class="comment-customer">${comment.name || 'Client'}</div>
+                        <div class="comment-date">${commentDate}</div>
+                    </div>
+                    <div class="comment-text"><strong>Message:</strong> ${comment.message || 'Aucun message'}</div>
+                    <div><strong>Email:</strong> ${comment.email || 'Non fourni'}</div>
+                    <div><strong>Téléphone:</strong> ${comment.phone || 'Non fourni'}</div>
+                    ${comment.subject ? `<div><strong>Sujet:</strong> ${comment.subject}</div>` : ''}
+                `;
+                commentsList.appendChild(commentItem);
+            });
+        }
+
+        // Update statistics
+        function updateStats() {
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const orders = JSON.parse(localStorage.getItem('pijamachic-orders')) || [];
+            
+            totalProducts.textContent = products.length;
+            totalOrders.textContent = orders.length;
+            
+            const revenue = orders.reduce((total, order) => total + order.total, 0);
+            totalRevenue.textContent = `${revenue.toFixed(2)} MAD`;
+        }
+
+        // Add product form submission
+        addProductForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const category = document.getElementById('product-category').value;
+            const collection = document.getElementById('product-collection').value;
+            const description = document.getElementById('product-description').value;
+            
+            // Validate required fields
+            if (!name || !price || !category || !collection || !description) {
+                alert('Veuillez remplir tous les champs obligatoires');
+                return;
+            }
+            
+            // Get image as base64
+            const imageFile = productImageInput.files[0];
+            if (!imageFile) {
+                alert('Veuillez sélectionner une image');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const image = e.target.result;
+                
+                // Get existing products or initialize empty array
+                let products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+                
+                // Generate new ID
+                const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
+                
+                const newProduct = {
+                    id: newId,
+                    name,
+                    price,
+                    category,
+                    collection,
+                    description,
+                    image
+                };
+                
+                // Add new product to array
+                products.push(newProduct);
+                
+                // Save back to localStorage
+                localStorage.setItem('pijamachic-products', JSON.stringify(products));
+                
+                showSuccessMessage('Produit ajouté avec succès!');
+                addProductForm.reset();
+                imagePreview.innerHTML = '';
+                loadProducts();
+                updateStats();
+            };
+            reader.readAsDataURL(imageFile);
+        });
+
+        // Open edit modal
+        function openEditModal(productId) {
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const product = products.find(p => p.id === productId);
+            
+            if (!product) return;
+            
+            document.getElementById('edit-product-id').value = product.id;
+            document.getElementById('edit-product-name').value = product.name;
+            document.getElementById('edit-product-price').value = product.price;
+            document.getElementById('edit-product-category').value = product.category;
+            document.getElementById('edit-product-collection').value = product.collection;
+            document.getElementById('edit-product-description').value = product.description;
+            
+            // Show current image
+            editImagePreview.innerHTML = `<img src="${product.image}" alt="Current Image">`;
+            
+            editModal.classList.add('active');
+        }
+
+        // Close edit modal
+        closeEditModal.addEventListener('click', function() {
+            editModal.classList.remove('active');
+        });
+
+        cancelEdit.addEventListener('click', function() {
+            editModal.classList.remove('active');
+        });
+
+        // Edit product form submission
+        editProductForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const productId = parseInt(document.getElementById('edit-product-id').value);
+            const name = document.getElementById('edit-product-name').value;
+            const price = parseFloat(document.getElementById('edit-product-price').value);
+            const category = document.getElementById('edit-product-category').value;
+            const collection = document.getElementById('edit-product-collection').value;
+            const description = document.getElementById('edit-product-description').value;
+            
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const productIndex = products.findIndex(p => p.id === productId);
+            
+            if (productIndex !== -1) {
+                // Check if new image was uploaded
+                const imageFile = editProductImageInput.files[0];
+                if (imageFile) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        const image = e.target.result;
+                        updateProduct(productIndex, name, price, category, collection, description, image);
+                    };
+                    reader.readAsDataURL(imageFile);
+                } else {
+                    // Keep existing image
+                    const image = products[productIndex].image;
+                    updateProduct(productIndex, name, price, category, collection, description, image);
+                }
+            }
+        });
+
+        function updateProduct(index, name, price, category, collection, description, image) {
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const productId = products[index].id;
+            
+            products[index] = {
+                id: productId,
+                name,
+                price,
+                category,
+                collection,
+                description,
+                image
+            };
+            
+            localStorage.setItem('pijamachic-products', JSON.stringify(products));
+            showSuccessMessage('Produit modifié avec succès!');
+            editModal.classList.remove('active');
+            loadProducts();
+        }
+
+        // Delete product
+        function deleteProduct(productId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) {
+                return;
+            }
+            
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const filteredProducts = products.filter(p => p.id !== productId);
+            
+            localStorage.setItem('pijamachic-products', JSON.stringify(filteredProducts));
+            showSuccessMessage('Produit supprimé avec succès!');
+            loadProducts();
+            updateStats();
+        }
+
+        // Show success message
+        function showSuccessMessage(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
