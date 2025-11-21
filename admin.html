@@ -790,6 +790,86 @@
 
        // Enhanced storage functions for mobile compatibility
     <script>
+            
+        // Admin credentials
+        const ADMIN_USERNAME = "15112025";
+        const ADMIN_PASSWORD = "pijamasoukainachic2025";
+
+        // Wait for DOM to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize elements
+            const loginForm = document.getElementById('login-form');
+            const loginError = document.getElementById('login-error');
+            const loginSection = document.getElementById('login-section');
+            const adminPanel = document.getElementById('admin-panel');
+            
+            console.log('Page loaded, elements found:', {
+                loginForm: !!loginForm,
+                loginError: !!loginError,
+                loginSection: !!loginSection,
+                adminPanel: !!adminPanel
+            });
+
+            // Check if already logged in
+            if (localStorage.getItem('admin-logged-in') === 'true') {
+                showAdminPanel();
+            } else {
+                showLoginSection();
+            }
+
+            // Login form submission - SIMPLE VERSION
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    console.log('Form submitted');
+                    
+                    const username = document.getElementById('admin-username').value;
+                    const password = document.getElementById('admin-password').value;
+                    
+                    console.log('Credentials:', username, password);
+                    
+                    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                        console.log('SUCCESS: Login correct');
+                        localStorage.setItem('admin-logged-in', 'true');
+                        showAdminPanel();
+                    } else {
+                        console.log('ERROR: Login failed');
+                        if (loginError) {
+                            loginError.style.display = 'block';
+                        }
+                    }
+                });
+            } else {
+                console.error('Login form not found!');
+            }
+
+            // Logout button
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', function() {
+                    localStorage.removeItem('admin-logged-in');
+                    showLoginSection();
+                });
+            }
+
+            function showLoginSection() {
+                if (loginSection) loginSection.style.display = 'flex';
+                if (adminPanel) adminPanel.style.display = 'none';
+            }
+
+            function showAdminPanel() {
+                if (loginSection) loginSection.style.display = 'none';
+                if (adminPanel) adminPanel.style.display = 'block';
+                loadProducts();
+                loadOrders();
+                loadComments();
+                updateStats();
+            }
+
+            // Add your existing loadProducts, loadOrders, etc functions here...
+            // [Keep all your existing product management functions]
+        });
+  
 function loadFromStorage(key) {
     try {
         // Try localStorage first
@@ -823,5 +903,6 @@ function saveToStorage(key, data) {
 </script>
 </body>
 </html>
+
 
 
