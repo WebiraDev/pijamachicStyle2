@@ -572,7 +572,7 @@
             background-color: var(--success);
             color: white;
             border: none;
-                border-radius: 4px;
+            border-radius: 4px;
             font-weight: 600;
             cursor: pointer;
         }
@@ -793,7 +793,6 @@
         const ADMIN_USERNAME = "15112025";
         const ADMIN_PASSWORD = "pijamasoukainachic2025";
 
-      
         // DOM Elements
         const accessDenied = document.getElementById('access-denied');
         const loginSection = document.getElementById('login-section');
@@ -835,30 +834,6 @@
                 showAdminPanel();
             } else {
                 showLoginSection();
-            }
-            
-            // Log IP for monitoring (but don't block access)
-            logIP();
-        }
-
-        // Log IP for monitoring (optional)
-        async function logIP() {
-            try {
-                const response = await fetch('https://api.ipify.org?format=json');
-                const data = await response.json();
-                const userIP = data.ip;
-                
-                console.log('Admin access attempt from IP:', userIP);
-                
-                // You can log this to a server or analytics service
-                // For now, we'll just log to console
-                if (ALLOWED_IPS.includes(userIP)) {
-                    console.log('✅ Known admin IP');
-                } else {
-                    console.log('⚠️ Unknown IP - monitoring access');
-                }
-            } catch (error) {
-                console.log('IP detection failed - proceeding with login');
             }
         }
 
@@ -939,7 +914,11 @@
 
         // Load products from localStorage
         function loadProducts() {
-            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            // Load from BOTH locations to ensure compatibility
+            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
+            const products = products1.length > 0 ? products1 : products2;
+            
             productsList.innerHTML = '';
             
             if (products.length === 0) {
@@ -1066,7 +1045,10 @@
 
         // Update statistics
         function updateStats() {
-            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
+            const products = products1.length > 0 ? products1 : products2;
+            
             const orders = JSON.parse(localStorage.getItem('pijamachic-orders')) || [];
             
             totalProducts.textContent = products.length;
@@ -1076,7 +1058,7 @@
             totalRevenue.textContent = `${revenue.toFixed(2)} MAD`;
         }
 
-        // Add product form submission
+        // Add product form submission - SAVE TO BOTH LOCATIONS
         addProductForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1103,8 +1085,12 @@
             reader.onload = function(e) {
                 const image = e.target.result;
                 
-                // Get existing products or initialize empty array
-                let products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+                // Get existing products from both locations
+                let products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+                let products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
+                
+                // Use whichever has products, or start fresh
+                let products = products1.length > 0 ? products1 : products2;
                 
                 // Generate new ID
                 const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
@@ -1122,8 +1108,9 @@
                 // Add new product to array
                 products.push(newProduct);
                 
-                // Save back to localStorage
+                // Save to BOTH locations to ensure compatibility
                 localStorage.setItem('pijamachic-products', JSON.stringify(products));
+                localStorage.setItem('pijamachic-admin-products', JSON.stringify(products));
                 
                 showSuccessMessage('Produit ajouté avec succès!');
                 addProductForm.reset();
@@ -1136,7 +1123,10 @@
 
         // Open edit modal
         function openEditModal(productId) {
-            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
+            const products = products1.length > 0 ? products1 : products2;
+            
             const product = products.find(p => p.id === productId);
             
             if (!product) return;
@@ -1163,7 +1153,7 @@
             editModal.classList.remove('active');
         });
 
-        // Edit product form submission
+        // Edit product form submission - UPDATE BOTH LOCATIONS
         editProductForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1174,7 +1164,10 @@
             const collection = document.getElementById('edit-product-collection').value;
             const description = document.getElementById('edit-product-description').value;
             
-            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
+            let products = products1.length > 0 ? products1 : products2;
+            
             const productIndex = products.findIndex(p => p.id === productId);
             
             if (productIndex !== -1) {
@@ -1196,7 +1189,10 @@
         });
 
         function updateProduct(index, name, price, category, collection, description, image) {
-            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
+            let products = products1.length > 0 ? products1 : products2;
+            
             const productId = products[index].id;
             
             products[index] = {
@@ -1209,22 +1205,31 @@
                 image
             };
             
+            // Save to BOTH locations
             localStorage.setItem('pijamachic-products', JSON.stringify(products));
+            localStorage.setItem('pijamachic-admin-products', JSON.stringify(products));
+            
             showSuccessMessage('Produit modifié avec succès!');
             editModal.classList.remove('active');
             loadProducts();
         }
 
-        // Delete product
+        // Delete product - DELETE FROM BOTH LOCATIONS
         function deleteProduct(productId) {
             if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) {
                 return;
             }
             
-            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
+            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
+            let products = products1.length > 0 ? products1 : products2;
+            
             const filteredProducts = products.filter(p => p.id !== productId);
             
+            // Save to BOTH locations
             localStorage.setItem('pijamachic-products', JSON.stringify(filteredProducts));
+            localStorage.setItem('pijamachic-admin-products', JSON.stringify(filteredProducts));
+            
             showSuccessMessage('Produit supprimé avec succès!');
             loadProducts();
             updateStats();
@@ -1239,6 +1244,15 @@
                 successMessage.style.display = 'none';
             }, 3000);
         }
-    </script>
+
+        // Debug function to check what's stored
+        function debugStorage() {
+            console.log('pijamachic-products:', JSON.parse(localStorage.getItem('pijamachic-products') || '[]'));
+            console.log('pijamachic-admin-products:', JSON.parse(localStorage.getItem('pijamachic-admin-products') || '[]'));
+        }
+
+        // Call this to see what's in storage
+        debugStorage();
+    </script>    
 </body>
 </html>
