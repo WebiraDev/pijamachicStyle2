@@ -1493,6 +1493,38 @@ window.addEventListener('beforeunload', function() {
         }
     });
 });
+        // Enhanced storage functions for mobile compatibility
+function loadFromStorage(key) {
+    try {
+        // Try localStorage first
+        let data = localStorage.getItem(key);
+        if (data) {
+            return JSON.parse(data);
+        }
+        // Fallback to sessionStorage
+        data = sessionStorage.getItem(key);
+        if (data) {
+            return JSON.parse(data);
+        }
+        return [];
+    } catch (e) {
+        console.error('Storage read error:', e);
+        return [];
+    }
+}
+
+function saveToStorage(key, data) {
+    try {
+        localStorage.setItem(key, JSON.stringify(data));
+        // Also save to sessionStorage as backup
+        sessionStorage.setItem(key, JSON.stringify(data));
+        return true;
+    } catch (e) {
+        console.error('Storage error:', e);
+        return false;
+    }
+}
 </script>
 </body>
+
 </html>
