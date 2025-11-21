@@ -788,7 +788,7 @@
         </div>
     </div>
 
-    <script>
+        <script>
         // Admin credentials
         const ADMIN_USERNAME = "15112025";
         const ADMIN_PASSWORD = "pijamasoukainachic2025";
@@ -912,12 +912,10 @@
             }
         });
 
-        // Load products from localStorage
+        // Load products from localStorage - FIXED TO USE PERMANENT STORAGE
         function loadProducts() {
-            // Load from BOTH locations to ensure compatibility
-            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
-            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
-            const products = products1.length > 0 ? products1 : products2;
+            // Load from the MAIN storage location that persists
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
             
             productsList.innerHTML = '';
             
@@ -1045,10 +1043,7 @@
 
         // Update statistics
         function updateStats() {
-            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
-            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
-            const products = products1.length > 0 ? products1 : products2;
-            
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
             const orders = JSON.parse(localStorage.getItem('pijamachic-orders')) || [];
             
             totalProducts.textContent = products.length;
@@ -1058,7 +1053,7 @@
             totalRevenue.textContent = `${revenue.toFixed(2)} MAD`;
         }
 
-        // Add product form submission - SAVE TO BOTH LOCATIONS
+        // Add product form submission - FIXED TO SAVE TO PERMANENT STORAGE
         addProductForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1085,12 +1080,8 @@
             reader.onload = function(e) {
                 const image = e.target.result;
                 
-                // Get existing products from both locations
-                let products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
-                let products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
-                
-                // Use whichever has products, or start fresh
-                let products = products1.length > 0 ? products1 : products2;
+                // Get existing products from MAIN storage
+                let products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
                 
                 // Generate new ID
                 const newId = products.length > 0 ? Math.max(...products.map(p => p.id)) + 1 : 1;
@@ -1108,25 +1099,23 @@
                 // Add new product to array
                 products.push(newProduct);
                 
-                // Save to BOTH locations to ensure compatibility
+                // Save to MAIN storage location (this persists between sessions)
                 localStorage.setItem('pijamachic-products', JSON.stringify(products));
-                localStorage.setItem('pijamachic-admin-products', JSON.stringify(products));
                 
                 showSuccessMessage('Produit ajouté avec succès!');
                 addProductForm.reset();
                 imagePreview.innerHTML = '';
                 loadProducts();
                 updateStats();
+                
+                console.log('Product saved to localStorage. Total products:', products.length);
             };
             reader.readAsDataURL(imageFile);
         });
 
         // Open edit modal
         function openEditModal(productId) {
-            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
-            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
-            const products = products1.length > 0 ? products1 : products2;
-            
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
             const product = products.find(p => p.id === productId);
             
             if (!product) return;
@@ -1153,7 +1142,7 @@
             editModal.classList.remove('active');
         });
 
-        // Edit product form submission - UPDATE BOTH LOCATIONS
+        // Edit product form submission
         editProductForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
@@ -1164,10 +1153,7 @@
             const collection = document.getElementById('edit-product-collection').value;
             const description = document.getElementById('edit-product-description').value;
             
-            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
-            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
-            let products = products1.length > 0 ? products1 : products2;
-            
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
             const productIndex = products.findIndex(p => p.id === productId);
             
             if (productIndex !== -1) {
@@ -1189,10 +1175,7 @@
         });
 
         function updateProduct(index, name, price, category, collection, description, image) {
-            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
-            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
-            let products = products1.length > 0 ? products1 : products2;
-            
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
             const productId = products[index].id;
             
             products[index] = {
@@ -1205,30 +1188,25 @@
                 image
             };
             
-            // Save to BOTH locations
+            // Save to MAIN storage
             localStorage.setItem('pijamachic-products', JSON.stringify(products));
-            localStorage.setItem('pijamachic-admin-products', JSON.stringify(products));
             
             showSuccessMessage('Produit modifié avec succès!');
             editModal.classList.remove('active');
             loadProducts();
         }
 
-        // Delete product - DELETE FROM BOTH LOCATIONS
+        // Delete product
         function deleteProduct(productId) {
             if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) {
                 return;
             }
             
-            const products1 = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
-            const products2 = JSON.parse(localStorage.getItem('pijamachic-admin-products')) || [];
-            let products = products1.length > 0 ? products1 : products2;
-            
+            const products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
             const filteredProducts = products.filter(p => p.id !== productId);
             
-            // Save to BOTH locations
+            // Save to MAIN storage
             localStorage.setItem('pijamachic-products', JSON.stringify(filteredProducts));
-            localStorage.setItem('pijamachic-admin-products', JSON.stringify(filteredProducts));
             
             showSuccessMessage('Produit supprimé avec succès!');
             loadProducts();
@@ -1245,14 +1223,17 @@
             }, 3000);
         }
 
-        // Debug function to check what's stored
+        // Debug function to check storage
         function debugStorage() {
-            console.log('pijamachic-products:', JSON.parse(localStorage.getItem('pijamachic-products') || '[]'));
-            console.log('pijamachic-admin-products:', JSON.parse(localStorage.getItem('pijamachic-admin-products') || '[]'));
+            const products = JSON.parse(localStorage.getItem('pijamachic-products') || '[]');
+            console.log('Products in storage:', products);
+            console.log('Storage key used: pijamachic-products');
         }
 
-        // Call this to see what's in storage
+        // Check storage on load
         debugStorage();
+    
     </script>    
 </body>
 </html>
+
