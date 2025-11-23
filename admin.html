@@ -139,197 +139,199 @@
     </div>
 
     <script>
-        // Configuration - UPDATE THIS WITH YOUR GOOGLE APPS SCRIPT URL
-        const GOOGLE_SCRIPT_URL = 'AKfycbxmPSxbKfLJqUs4zQG7xMGCABuYIRulxxlNUYxGrvbYYjjZarNwg2hvpiQF0Q3GswvI3g';
+<script>
+    // Configuration - USE THE WEB APP URL FROM GOOGLE APPS SCRIPT DEPLOYMENT
+    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmPSxbKfLJqUs4zQG7xMGCABuYIRulxxlNUYxGrvbYYjjZarNwg2hvpiQF0Q3GswvI3g/exec';
 
-        // Admin credentials
-        const ADMIN_USERNAME = "15112025";
-        const ADMIN_PASSWORD = "pijamasoukainachic2025";
+    // Admin credentials
+    const ADMIN_USERNAME = "15112025";
+    const ADMIN_PASSWORD = "pijamasoukainachic2025";
 
-        // DOM Elements
-        const accessDenied = document.getElementById('access-denied');
-        const loginSection = document.getElementById('login-section');
-        const adminPanel = document.getElementById('admin-panel');
-        const loginForm = document.getElementById('login-form');
-        const loginError = document.getElementById('login-error');
-        const logoutBtn = document.getElementById('logout-btn');
-        const addProductForm = document.getElementById('add-product-form');
-        const productsList = document.getElementById('products-list');
-        const fileUpload = document.getElementById('file-upload');
-        const productImageInput = document.getElementById('product-image');
-        const imagePreview = document.getElementById('image-preview');
-        const successMessage = document.getElementById('success-message');
+    // DOM Elements
+    const accessDenied = document.getElementById('access-denied');
+    const loginSection = document.getElementById('login-section');
+    const adminPanel = document.getElementById('admin-panel');
+    const loginForm = document.getElementById('login-form');
+    const loginError = document.getElementById('login-error');
+    const logoutBtn = document.getElementById('logout-btn');
+    const addProductForm = document.getElementById('add-product-form');
+    const productsList = document.getElementById('products-list');
+    const fileUpload = document.getElementById('file-upload');
+    const productImageInput = document.getElementById('product-image');
+    const imagePreview = document.getElementById('image-preview');
+    const successMessage = document.getElementById('success-message');
 
-        // Google Sheets API functions
-        async function saveProductToSheet(productData) {
-            try {
-                const response = await fetch(https://docs.google.com/spreadsheets/d/1O8E8_Ju_IjeMc9qIHxmCi0Nm3_3vtD4rkKP5DkiDj90/edit?gid=0#gid=0, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'addProduct',
-                        data: productData
-                    })
-                });
-                
-                const result = await response.json();
-                return result.success;
-            } catch (error) {
-                console.error('Error saving product:', error);
-                return false;
-            }
-        }
-
-        async function loadProductsFromSheet() {
-            try {
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProducts`);
-                const result = await response.json();
-                return result.data || [];
-            } catch (error) {
-                console.error('Error loading products:', error);
-                return [];
-            }
-        }
-
-        async function deleteProductFromSheet(productId) {
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        action: 'deleteProduct',
-                        productId: productId
-                    })
-                });
-                
-                const result = await response.json();
-                return result.success;
-            } catch (error) {
-                console.error('Error deleting product:', error);
-                return false;
-            }
-        }
-
-        // Image to Base64 conversion (works on mobile)
-        function fileToBase64(file) {
-            return new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
+    // Google Sheets API functions
+    async function saveProductToSheet(productData) {
+        try {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {  // FIXED: Use the constant, not a URL string
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'addProduct',
+                    data: productData
+                })
             });
+            
+            const result = await response.json();
+            return result.success;
+        } catch (error) {
+            console.error('Error saving product:', error);
+            return false;
         }
+    }
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', function() {
-            initializeAdmin();
-            setupEventListeners();
+    async function loadProductsFromSheet() {
+        try {
+            const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProducts`);
+            const result = await response.json();
+            return result.data || [];
+        } catch (error) {
+            console.error('Error loading products:', error);
+            return [];
+        }
+    }
+
+    async function deleteProductFromSheet(productId) {
+        try {
+            const response = await fetch(GOOGLE_SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    action: 'deleteProduct',
+                    productId: productId
+                })
+            });
+            
+            const result = await response.json();
+            return result.success;
+        } catch (error) {
+            console.error('Error deleting product:', error);
+            return false;
+        }
+    }
+
+    // Image to Base64 conversion (works on mobile)
+    function fileToBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
+
+    // Initialize
+    document.addEventListener('DOMContentLoaded', function() {
+        initializeAdmin();
+        setupEventListeners();
+    });
+
+    function initializeAdmin() {
+        const isLoggedIn = localStorage.getItem('admin-logged-in');
+        if (isLoggedIn === 'true') {
+            showAdminPanel();
+        } else {
+            showLoginSection();
+        }
+    }
+
+    function setupEventListeners() {
+        // Login form
+        loginForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('admin-username').value;
+            const password = document.getElementById('admin-password').value;
+            
+            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                localStorage.setItem('admin-logged-in', 'true');
+                showAdminPanel();
+                loginForm.reset();
+            } else {
+                showError('Nom d\'utilisateur ou mot de passe incorrect');
+            }
         });
 
-        function initializeAdmin() {
-            const isLoggedIn = localStorage.getItem('admin-logged-in');
-            if (isLoggedIn === 'true') {
-                showAdminPanel();
-            } else {
-                showLoginSection();
-            }
-        }
+        // Logout button
+        logoutBtn.addEventListener('click', function() {
+            localStorage.removeItem('admin-logged-in');
+            showLoginSection();
+            loginForm.reset();
+        });
 
-        function setupEventListeners() {
-            // Login form
-            loginForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                const username = document.getElementById('admin-username').value;
-                const password = document.getElementById('admin-password').value;
-                
-                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-                    localStorage.setItem('admin-logged-in', 'true');
-                    showAdminPanel();
-                    loginForm.reset();
-                } else {
-                    showError('Nom d\'utilisateur ou mot de passe incorrect');
-                }
-            });
-
-            // Logout button
-            logoutBtn.addEventListener('click', function() {
-                localStorage.removeItem('admin-logged-in');
-                showLoginSection();
-                loginForm.reset();
-            });
-
-            // File upload
-            fileUpload.addEventListener('click', () => productImageInput.click());
-            
-            productImageInput.addEventListener('change', async function(e) {
-                const file = e.target.files[0];
-                if (file) {
-                    try {
-                        // Check file size (max 5MB)
-                        if (file.size > 5 * 1024 * 1024) {
-                            showError('L\'image est trop volumineuse. Maximum 5MB.');
-                            return;
-                        }
-                        
-                        const base64 = await fileToBase64(file);
-                        imagePreview.innerHTML = `<img src="${base64}" alt="Preview">`;
-                    } catch (error) {
-                        showError('Erreur lors du chargement de l\'image');
-                    }
-                }
-            });
-
-            // Add product form
-            addProductForm.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                
-                const name = document.getElementById('product-name').value;
-                const price = parseFloat(document.getElementById('product-price').value);
-                const category = document.getElementById('product-category').value;
-                const collection = document.getElementById('product-collection').value;
-                const description = document.getElementById('product-description').value;
-                const imageFile = productImageInput.files[0];
-
-                if (!name || !price || !category || !collection || !description || !imageFile) {
-                    showError('Veuillez remplir tous les champs');
-                    return;
-                }
-
+        // File upload
+        fileUpload.addEventListener('click', () => productImageInput.click());
+        
+        productImageInput.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file) {
                 try {
-                    const imageBase64 = await fileToBase64(imageFile);
-                    
-                    const productData = {
-                        id: Date.now(),
-                        name,
-                        price,
-                        category,
-                        collection,
-                        description,
-                        image: imageBase64,
-                        date_added: new Date().toISOString()
-                    };
-
-                    const saved = await saveProductToSheet(productData);
-                    
-                    if (saved) {
-                        showSuccess('Produit ajouté avec succès!');
-                        addProductForm.reset();
-                        imagePreview.innerHTML = '';
-                        loadProducts();
-                    } else {
-                        showError('Erreur lors de l\'ajout du produit');
+                    // Check file size (max 5MB)
+                    if (file.size > 5 * 1024 * 1024) {
+                        showError('L\'image est trop volumineuse. Maximum 5MB.');
+                        return;
                     }
+                    
+                    const base64 = await fileToBase64(file);
+                    imagePreview.innerHTML = `<img src="${base64}" alt="Preview">`;
                 } catch (error) {
+                    showError('Erreur lors du chargement de l\'image');
+                }
+            }
+        });
+
+        // Add product form
+        addProductForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const name = document.getElementById('product-name').value;
+            const price = parseFloat(document.getElementById('product-price').value);
+            const category = document.getElementById('product-category').value;
+            const collection = document.getElementById('product-collection').value;
+            const description = document.getElementById('product-description').value;
+            const imageFile = productImageInput.files[0];
+
+            if (!name || !price || !category || !collection || !description || !imageFile) {
+                showError('Veuillez remplir tous les champs');
+                return;
+            }
+
+            try {
+                const imageBase64 = await fileToBase64(imageFile);
+                
+                const productData = {
+                    id: Date.now(),
+                    name,
+                    price,
+                    category,
+                    collection,
+                    description,
+                    image: imageBase64,
+                    date_added: new Date().toISOString()
+                };
+
+                const saved = await saveProductToSheet(productData);
+                
+                if (saved) {
+                    showSuccess('Produit ajouté avec succès!');
+                    addProductForm.reset();
+                    imagePreview.innerHTML = '';
+                    loadProducts();
+                } else {
                     showError('Erreur lors de l\'ajout du produit');
                 }
-            });
-        }
+            } catch (error) {
+                showError('Erreur lors de l\'ajout du produit: ' + error.message);
+            }
+        });
+    }
 
-        async function loadProducts() {
+    async function loadProducts() {
+        try {
             const products = await loadProductsFromSheet();
             productsList.innerHTML = '';
             
@@ -356,49 +358,54 @@
                 `;
                 productsList.appendChild(productItem);
             });
+        } catch (error) {
+            console.error('Error loading products:', error);
+            productsList.innerHTML = '<p>Erreur lors du chargement des produits</p>';
         }
+    }
 
-        async function deleteProduct(productId) {
-            if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) return;
-            
-            const deleted = await deleteProductFromSheet(productId);
-            if (deleted) {
-                showSuccess('Produit supprimé avec succès!');
-                loadProducts();
-            } else {
-                showError('Erreur lors de la suppression du produit');
-            }
-        }
-
-        function showLoginSection() {
-            loginSection.style.display = 'flex';
-            adminPanel.style.display = 'none';
-            accessDenied.style.display = 'none';
-        }
-
-        function showAdminPanel() {
-            loginSection.style.display = 'none';
-            adminPanel.style.display = 'block';
-            accessDenied.style.display = 'none';
+    async function deleteProduct(productId) {
+        if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) return;
+        
+        const deleted = await deleteProductFromSheet(productId);
+        if (deleted) {
+            showSuccess('Produit supprimé avec succès!');
             loadProducts();
+        } else {
+            showError('Erreur lors de la suppression du produit');
         }
+    }
 
-        function showSuccess(message) {
-            successMessage.textContent = message;
-            successMessage.style.display = 'block';
-            successMessage.style.backgroundColor = 'var(--success)';
-            setTimeout(() => successMessage.style.display = 'none', 3000);
-        }
+    function showLoginSection() {
+        loginSection.style.display = 'flex';
+        adminPanel.style.display = 'none';
+        accessDenied.style.display = 'none';
+    }
 
-        function showError(message) {
-            successMessage.textContent = message;
-            successMessage.style.display = 'block';
-            successMessage.style.backgroundColor = 'var(--danger)';
-            setTimeout(() => successMessage.style.display = 'none', 3000);
-        }
+    function showAdminPanel() {
+        loginSection.style.display = 'none';
+        adminPanel.style.display = 'block';
+        accessDenied.style.display = 'none';
+        loadProducts();
+    }
 
-        // Make deleteProduct global for onclick events
-        window.deleteProduct = deleteProduct;
-    </script>
+    function showSuccess(message) {
+        successMessage.textContent = message;
+        successMessage.style.display = 'block';
+        successMessage.style.backgroundColor = 'var(--success)';
+        setTimeout(() => successMessage.style.display = 'none', 3000);
+    }
+
+    function showError(message) {
+        successMessage.textContent = message;
+        successMessage.style.display = 'block';
+        successMessage.style.backgroundColor = 'var(--danger)';
+        setTimeout(() => successMessage.style.display = 'none', 3000);
+    }
+
+    // Make deleteProduct global for onclick events
+    window.deleteProduct = deleteProduct;
+</script>
 </body>
 </html>
+
