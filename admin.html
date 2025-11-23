@@ -5,9 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Pijama Chic Style</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Keep your existing CSS styles -->
     <style>
-            * {
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
@@ -27,125 +26,108 @@
         }
 
         body {
-            background-color: #f9f9f9;
-            color: #333;
-            line-height: 1.6;
-            min-height: 100vh;
+            background-color: #f5f5f5;
         }
 
-        .container {
-            width: 90%;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px 0;
-        }
-
-        /* Access Denied Section */
+        /* Access Denied Styles */
         .access-denied {
             display: none;
-            justify-content: center;
-            align-items: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, var(--primary) 0%, #1a252f 100%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
         }
 
-        .access-denied-content {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 40px;
-            backdrop-filter: blur(10px);
+        .access-denied-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
         }
 
-        .access-denied h1 {
-            font-size: 36px;
-            margin-bottom: 20px;
-        }
-
-        .access-denied p {
-            font-size: 18px;
-            margin-bottom: 30px;
-        }
-
-        /* Login Section */
+        /* Login Section Styles */
         .login-section {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            display: none;
             min-height: 100vh;
-            background: linear-gradient(135deg, var(--primary) 0%, #1a252f 100%);
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
         }
 
         .login-container {
-            background-color: white;
+            background: white;
+            padding: 2rem;
             border-radius: 10px;
-            padding: 40px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            width: 90%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
             max-width: 400px;
         }
 
         .login-title {
             text-align: center;
-            margin-bottom: 30px;
-            color: var(--primary);
-            font-size: 28px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
+            margin-bottom: 2rem;
             color: var(--dark);
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
+        .form-group {
+            margin-bottom: 1.5rem;
         }
 
-        .login-btn {
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        input, select, textarea {
             width: 100%;
-            padding: 12px;
-            background-color: var(--primary);
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .login-btn, .submit-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
             color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 5px;
+            font-size: 1rem;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background 0.3s;
         }
 
-        .login-btn:hover {
-            background-color: #1a252f;
+        .login-btn:hover, .submit-btn:hover {
+            background: var(--secondary);
         }
 
         .error-message {
             color: var(--danger);
             text-align: center;
-            margin-top: 15px;
+            margin-top: 1rem;
             display: none;
         }
 
-        /* Admin Panel */
+        /* Admin Panel Styles */
         .admin-panel {
             display: none;
         }
 
         .admin-header {
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            padding: 20px 0;
-            margin-bottom: 30px;
+            background: var(--dark);
+            color: white;
+            padding: 1rem 0;
         }
 
         .admin-nav {
@@ -155,161 +137,91 @@
         }
 
         .admin-title {
-            font-size: 28px;
-            color: var(--primary);
+            font-size: 1.5rem;
         }
 
         .admin-title span {
-            color: var(--secondary);
+            color: var(--accent);
         }
 
         .logout-btn {
-            padding: 10px 20px;
-            background-color: var(--danger);
+            background: var(--danger);
             color: white;
             border: none;
-            border-radius: 4px;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
             cursor: pointer;
-            font-weight: 600;
-            transition: background-color 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
-        .logout-btn:hover {
-            background-color: #c0392b;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
         }
 
-        /* Admin Content */
         .admin-content {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 30px;
-        }
-
-        @media (max-width: 768px) {
-            .admin-content {
-                grid-template-columns: 1fr;
-            }
+            padding: 2rem 0;
         }
 
         .admin-section {
-            background-color: white;
-            border-radius: 8px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
         }
 
         .section-title {
-            font-size: 22px;
-            margin-bottom: 20px;
-            color: var(--primary);
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--secondary);
-        }
-
-        /* Add Product Form */
-        .add-product-form .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
         }
 
         .form-row {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-
-        @media (max-width: 480px) {
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            resize: vertical;
-            min-height: 80px;
-        }
-
-        .form-group select {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 16px;
-            background-color: white;
+            gap: 1rem;
         }
 
         .file-upload {
             border: 2px dashed #ddd;
-            border-radius: 4px;
-            padding: 20px;
+            padding: 2rem;
             text-align: center;
+            border-radius: 5px;
             cursor: pointer;
             transition: border-color 0.3s;
         }
 
         .file-upload:hover {
-            border-color: var(--primary);
-        }
-
-        .file-upload i {
-            font-size: 48px;
-            color: var(--gray);
-            margin-bottom: 10px;
-        }
-
-        .file-upload input {
-            display: none;
+            border-color: var(--accent);
         }
 
         .image-preview {
-            margin-top: 15px;
-            text-align: center;
+            margin-top: 1rem;
         }
 
         .image-preview img {
-            max-width: 100%;
+            max-width: 200px;
             max-height: 200px;
-            border-radius: 4px;
+            border-radius: 5px;
         }
 
-        .submit-btn {
-            width: 100%;
-            padding: 12px;
-            background-color: var(--success);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            margin-top: 10px;
-        }
-
-        .submit-btn:hover {
-            background-color: #219653;
-        }
-
-        /* Products List */
         .products-list {
-            max-height: 600px;
-            overflow-y: auto;
+            display: grid;
+            gap: 1rem;
         }
 
         .product-item {
             display: flex;
             align-items: center;
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            transition: background-color 0.3s;
-        }
-
-        .product-item:hover {
-            background-color: #f9f9f9;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            gap: 1rem;
         }
 
         .product-image {
@@ -317,8 +229,7 @@
             height: 80px;
             background-size: cover;
             background-position: center;
-            border-radius: 4px;
-            margin-right: 15px;
+            border-radius: 5px;
         }
 
         .product-details {
@@ -326,272 +237,57 @@
         }
 
         .product-name {
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
         }
 
         .product-price {
-            color: var(--secondary);
-            font-weight: 600;
-            margin-bottom: 5px;
+            color: var(--primary);
+            font-weight: bold;
         }
 
         .product-category {
             color: var(--gray);
-            font-size: 14px;
+            font-size: 0.9rem;
         }
 
         .product-actions {
             display: flex;
-            gap: 10px;
-        }
-
-        .edit-btn, .delete-btn {
-            padding: 8px 12px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s;
-        }
-
-        .edit-btn {
-            background-color: var(--warning);
-            color: white;
-        }
-
-        .edit-btn:hover {
-            background-color: #e67e22;
+            gap: 0.5rem;
         }
 
         .delete-btn {
-            background-color: var(--danger);
+            background: var(--danger);
             color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
-        .delete-btn:hover {
-            background-color: #c0392b;
-        }
-
-        /* Orders Section */
-        .orders-section {
-            grid-column: 1 / -1;
-        }
-
-        .orders-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .order-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-        }
-
-        .order-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .order-id {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .order-date {
-            color: var(--gray);
-            font-size: 14px;
-        }
-
-        .order-customer {
-            margin-bottom: 10px;
-        }
-
-        .order-items {
-            margin-bottom: 10px;
-        }
-
-        .order-item-product {
-            display: flex;
-            justify-content: space-between;
-            padding: 5px 0;
-            border-bottom: 1px dashed #eee;
-        }
-
-        .order-total {
-            text-align: right;
-            font-weight: 600;
-            color: var(--secondary);
-            font-size: 18px;
-        }
-
-        /* Comments Section */
-        .comments-section {
-            grid-column: 1 / -1;
-        }
-
-        .comments-list {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-
-        .comment-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
-            margin-bottom: 15px;
-            background-color: #f9f9f9;
-            border-radius: 4px;
-        }
-
-        .comment-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .comment-customer {
-            font-weight: 600;
-            color: var(--primary);
-        }
-
-        .comment-date {
-            color: var(--gray);
-            font-size: 14px;
-        }
-
-        .comment-text {
-            margin-bottom: 10px;
-            line-height: 1.5;
-        }
-
-        .comment-rating {
-            color: var(--warning);
-        }
-
-        /* Stats Section */
-        .stats-section {
-            grid-column: 1 / -1;
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-        }
-
-        .stat-card {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 10px;
-        }
-
-        .stat-label {
-            color: var(--gray);
-            font-size: 14px;
-        }
-
-        /* Success Message */
         .success-message {
-            background-color: var(--success);
+            display: none;
+            padding: 1rem;
+            background: var(--success);
             color: white;
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
+            border-radius: 5px;
+            margin-bottom: 1rem;
             text-align: center;
-            display: none;
         }
 
-        /* Edit Product Modal */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 1000;
-            display: none;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .modal-overlay.active {
-            display: flex;
-        }
-
-        .modal-container {
-            background-color: white;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-
-        .modal-title {
-            font-size: 24px;
-            color: var(--primary);
-        }
-
-        .close-modal {
-            font-size: 24px;
-            color: var(--dark);
-            cursor: pointer;
-            background: none;
-            border: none;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-
-        .update-btn {
-            flex: 1;
-            padding: 12px;
-            background-color: var(--success);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .cancel-btn {
-            flex: 1;
-            padding: 12px;
-            background-color: var(--gray);
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-weight: 600;
-            cursor: pointer;
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-item {
+                flex-direction: column;
+                text-align: center;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Keep your existing HTML structure -->
     <!-- Access Denied Section -->
     <section class="access-denied" id="access-denied">
         <div class="access-denied-content">
@@ -669,7 +365,7 @@
                         </div>
                         <div class="form-group">
                             <label for="product-description">Description</label>
-                            <textarea id="product-description" required></textarea>
+                            <textarea id="product-description" rows="4" required></textarea>
                         </div>
                         <div class="form-group">
                             <label>Image du produit</label>
@@ -691,282 +387,276 @@
                         <!-- Products will be loaded here -->
                     </div>
                 </section>
-
-                <!-- Other sections... -->
             </div>
         </div>
     </div>
 
     <script>
+        // Configuration - USE THE WEB APP URL FROM GOOGLE APPS SCRIPT DEPLOYMENT
+        const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmPSxbKfLJqUs4zQG7xMGCABuYIRulxxlNUYxGrvbYYjjZarNwg2hvpiQF0Q3GswvI3g/exec';
 
-    // Configuration - USE THE WEB APP URL FROM GOOGLE APPS SCRIPT DEPLOYMENT
-    const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmPSxbKfLJqUs4zQG7xMGCABuYIRulxxlNUYxGrvbYYjjZarNwg2hvpiQF0Q3GswvI3g/exec';
+        // Admin credentials
+        const ADMIN_USERNAME = "15112025";
+        const ADMIN_PASSWORD = "pijamasoukainachic2025";
 
-    // Admin credentials
-    const ADMIN_USERNAME = "15112025";
-    const ADMIN_PASSWORD = "pijamasoukainachic2025";
+        // DOM Elements
+        const accessDenied = document.getElementById('access-denied');
+        const loginSection = document.getElementById('login-section');
+        const adminPanel = document.getElementById('admin-panel');
+        const loginForm = document.getElementById('login-form');
+        const loginError = document.getElementById('login-error');
+        const logoutBtn = document.getElementById('logout-btn');
+        const addProductForm = document.getElementById('add-product-form');
+        const productsList = document.getElementById('products-list');
+        const fileUpload = document.getElementById('file-upload');
+        const productImageInput = document.getElementById('product-image');
+        const imagePreview = document.getElementById('image-preview');
+        const successMessage = document.getElementById('success-message');
 
-    // DOM Elements
-    const accessDenied = document.getElementById('access-denied');
-    const loginSection = document.getElementById('login-section');
-    const adminPanel = document.getElementById('admin-panel');
-    const loginForm = document.getElementById('login-form');
-    const loginError = document.getElementById('login-error');
-    const logoutBtn = document.getElementById('logout-btn');
-    const addProductForm = document.getElementById('add-product-form');
-    const productsList = document.getElementById('products-list');
-    const fileUpload = document.getElementById('file-upload');
-    const productImageInput = document.getElementById('product-image');
-    const imagePreview = document.getElementById('image-preview');
-    const successMessage = document.getElementById('success-message');
-
-    // Google Sheets API functions
-    async function saveProductToSheet(productData) {
-        try {
-            const response = await fetch(GOOGLE_SCRIPT_URL, {  // FIXED: Use the constant, not a URL string
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'addProduct',
-                    data: productData
-                })
-            });
-            
-            const result = await response.json();
-            return result.success;
-        } catch (error) {
-            console.error('Error saving product:', error);
-            return false;
-        }
-    }
-
-    async function loadProductsFromSheet() {
-        try {
-            const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProducts`);
-            const result = await response.json();
-            return result.data || [];
-        } catch (error) {
-            console.error('Error loading products:', error);
-            return [];
-        }
-    }
-
-    async function deleteProductFromSheet(productId) {
-        try {
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    action: 'deleteProduct',
-                    productId: productId
-                })
-            });
-            
-            const result = await response.json();
-            return result.success;
-        } catch (error) {
-            console.error('Error deleting product:', error);
-            return false;
-        }
-    }
-
-    // Image to Base64 conversion (works on mobile)
-    function fileToBase64(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = error => reject(error);
-        });
-    }
-
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-        initializeAdmin();
-        setupEventListeners();
-    });
-
-    function initializeAdmin() {
-        const isLoggedIn = localStorage.getItem('admin-logged-in');
-        if (isLoggedIn === 'true') {
-            showAdminPanel();
-        } else {
-            showLoginSection();
-        }
-    }
-
-    function setupEventListeners() {
-        // Login form
-        loginForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const username = document.getElementById('admin-username').value;
-            const password = document.getElementById('admin-password').value;
-            
-            if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
-                localStorage.setItem('admin-logged-in', 'true');
-                showAdminPanel();
-                loginForm.reset();
-            } else {
-                showError('Nom d\'utilisateur ou mot de passe incorrect');
-            }
-        });
-
-        // Logout button
-        logoutBtn.addEventListener('click', function() {
-            localStorage.removeItem('admin-logged-in');
-            showLoginSection();
-            loginForm.reset();
-        });
-
-        // File upload
-        fileUpload.addEventListener('click', () => productImageInput.click());
-        
-        productImageInput.addEventListener('change', async function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                try {
-                    // Check file size (max 5MB)
-                    if (file.size > 5 * 1024 * 1024) {
-                        showError('L\'image est trop volumineuse. Maximum 5MB.');
-                        return;
-                    }
-                    
-                    const base64 = await fileToBase64(file);
-                    imagePreview.innerHTML = `<img src="${base64}" alt="Preview">`;
-                } catch (error) {
-                    showError('Erreur lors du chargement de l\'image');
-                }
-            }
-        });
-
-        // Add product form
-        addProductForm.addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('product-name').value;
-            const price = parseFloat(document.getElementById('product-price').value);
-            const category = document.getElementById('product-category').value;
-            const collection = document.getElementById('product-collection').value;
-            const description = document.getElementById('product-description').value;
-            const imageFile = productImageInput.files[0];
-
-            if (!name || !price || !category || !collection || !description || !imageFile) {
-                showError('Veuillez remplir tous les champs');
-                return;
-            }
-
+        // Google Sheets API functions
+        async function saveProductToSheet(productData) {
             try {
-                const imageBase64 = await fileToBase64(imageFile);
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'addProduct',
+                        data: productData
+                    })
+                });
                 
-                const productData = {
-                    id: Date.now(),
-                    name,
-                    price,
-                    category,
-                    collection,
-                    description,
-                    image: imageBase64,
-                    date_added: new Date().toISOString()
-                };
-
-                const saved = await saveProductToSheet(productData);
-                
-                if (saved) {
-                    showSuccess('Produit ajouté avec succès!');
-                    addProductForm.reset();
-                    imagePreview.innerHTML = '';
-                    loadProducts();
-                } else {
-                    showError('Erreur lors de l\'ajout du produit');
-                }
+                const result = await response.json();
+                return result.success;
             } catch (error) {
-                showError('Erreur lors de l\'ajout du produit: ' + error.message);
+                console.error('Error saving product:', error);
+                return false;
             }
-        });
-    }
+        }
 
-    async function loadProducts() {
-        try {
-            const products = await loadProductsFromSheet();
-            productsList.innerHTML = '';
-            
-            if (products.length === 0) {
-                productsList.innerHTML = '<p>Aucun produit trouvé.</p>';
-                return;
+        async function loadProductsFromSheet() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProducts`);
+                const result = await response.json();
+                return result.data || [];
+            } catch (error) {
+                console.error('Error loading products:', error);
+                return [];
             }
-            
-            products.forEach(product => {
-                const productItem = document.createElement('div');
-                productItem.className = 'product-item';
-                productItem.innerHTML = `
-                    <div class="product-image" style="background-image: url('${product.image}')"></div>
-                    <div class="product-details">
-                        <div class="product-name">${product.name}</div>
-                        <div class="product-price">${product.price} MAD</div>
-                        <div class="product-category">${product.category} | ${product.collection}</div>
-                    </div>
-                    <div class="product-actions">
-                        <button class="delete-btn" onclick="deleteProduct(${product.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                productsList.appendChild(productItem);
+        }
+
+        async function deleteProductFromSheet(productId) {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'deleteProduct',
+                        productId: productId
+                    })
+                });
+                
+                const result = await response.json();
+                return result.success;
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                return false;
+            }
+        }
+
+        // Image to Base64 conversion (works on mobile)
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
             });
-        } catch (error) {
-            console.error('Error loading products:', error);
-            productsList.innerHTML = '<p>Erreur lors du chargement des produits</p>';
         }
-    }
 
-    async function deleteProduct(productId) {
-        if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) return;
-        
-        const deleted = await deleteProductFromSheet(productId);
-        if (deleted) {
-            showSuccess('Produit supprimé avec succès!');
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeAdmin();
+            setupEventListeners();
+        });
+
+        function initializeAdmin() {
+            const isLoggedIn = localStorage.getItem('admin-logged-in');
+            if (isLoggedIn === 'true') {
+                showAdminPanel();
+            } else {
+                showLoginSection();
+            }
+        }
+
+        function setupEventListeners() {
+            // Login form
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('admin-username').value;
+                const password = document.getElementById('admin-password').value;
+                
+                if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+                    localStorage.setItem('admin-logged-in', 'true');
+                    showAdminPanel();
+                    loginForm.reset();
+                } else {
+                    showError('Nom d\'utilisateur ou mot de passe incorrect');
+                }
+            });
+
+            // Logout button
+            logoutBtn.addEventListener('click', function() {
+                localStorage.removeItem('admin-logged-in');
+                showLoginSection();
+                loginForm.reset();
+            });
+
+            // File upload
+            fileUpload.addEventListener('click', () => productImageInput.click());
+            
+            productImageInput.addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    try {
+                        // Check file size (max 5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            showError('L\'image est trop volumineuse. Maximum 5MB.');
+                            return;
+                        }
+                        
+                        const base64 = await fileToBase64(file);
+                        imagePreview.innerHTML = `<img src="${base64}" alt="Preview">`;
+                    } catch (error) {
+                        showError('Erreur lors du chargement de l\'image');
+                    }
+                }
+            });
+
+            // Add product form
+            addProductForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('product-name').value;
+                const price = parseFloat(document.getElementById('product-price').value);
+                const category = document.getElementById('product-category').value;
+                const collection = document.getElementById('product-collection').value;
+                const description = document.getElementById('product-description').value;
+                const imageFile = productImageInput.files[0];
+
+                if (!name || !price || !category || !collection || !description || !imageFile) {
+                    showError('Veuillez remplir tous les champs');
+                    return;
+                }
+
+                try {
+                    const imageBase64 = await fileToBase64(imageFile);
+                    
+                    const productData = {
+                        id: Date.now(),
+                        name,
+                        price,
+                        category,
+                        collection,
+                        description,
+                        image: imageBase64,
+                        date_added: new Date().toISOString()
+                    };
+
+                    const saved = await saveProductToSheet(productData);
+                    
+                    if (saved) {
+                        showSuccess('Produit ajouté avec succès!');
+                        addProductForm.reset();
+                        imagePreview.innerHTML = '';
+                        loadProducts();
+                    } else {
+                        showError('Erreur lors de l\'ajout du produit');
+                    }
+                } catch (error) {
+                    showError('Erreur lors de l\'ajout du produit: ' + error.message);
+                }
+            });
+        }
+
+        async function loadProducts() {
+            try {
+                const products = await loadProductsFromSheet();
+                productsList.innerHTML = '';
+                
+                if (products.length === 0) {
+                    productsList.innerHTML = '<p>Aucun produit trouvé.</p>';
+                    return;
+                }
+                
+                products.forEach(product => {
+                    const productItem = document.createElement('div');
+                    productItem.className = 'product-item';
+                    productItem.innerHTML = `
+                        <div class="product-image" style="background-image: url('${product.image}')"></div>
+                        <div class="product-details">
+                            <div class="product-name">${product.name}</div>
+                            <div class="product-price">${product.price} MAD</div>
+                            <div class="product-category">${product.category} | ${product.collection}</div>
+                        </div>
+                        <div class="product-actions">
+                            <button class="delete-btn" onclick="deleteProduct(${product.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    productsList.appendChild(productItem);
+                });
+            } catch (error) {
+                console.error('Error loading products:', error);
+                productsList.innerHTML = '<p>Erreur lors du chargement des produits</p>';
+            }
+        }
+
+        async function deleteProduct(productId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) return;
+            
+            const deleted = await deleteProductFromSheet(productId);
+            if (deleted) {
+                showSuccess('Produit supprimé avec succès!');
+                loadProducts();
+            } else {
+                showError('Erreur lors de la suppression du produit');
+            }
+        }
+
+        function showLoginSection() {
+            loginSection.style.display = 'flex';
+            adminPanel.style.display = 'none';
+            accessDenied.style.display = 'none';
+        }
+
+        function showAdminPanel() {
+            loginSection.style.display = 'none';
+            adminPanel.style.display = 'block';
+            accessDenied.style.display = 'none';
             loadProducts();
-        } else {
-            showError('Erreur lors de la suppression du produit');
         }
-    }
 
-    function showLoginSection() {
-        loginSection.style.display = 'flex';
-        adminPanel.style.display = 'none';
-        accessDenied.style.display = 'none';
-    }
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            successMessage.style.backgroundColor = 'var(--success)';
+            setTimeout(() => successMessage.style.display = 'none', 3000);
+        }
 
-    function showAdminPanel() {
-        loginSection.style.display = 'none';
-        adminPanel.style.display = 'block';
-        accessDenied.style.display = 'none';
-        loadProducts();
-    }
+        function showError(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            successMessage.style.backgroundColor = 'var(--danger)';
+            setTimeout(() => successMessage.style.display = 'none', 3000);
+        }
 
-    function showSuccess(message) {
-        successMessage.textContent = message;
-        successMessage.style.display = 'block';
-        successMessage.style.backgroundColor = 'var(--success)';
-        setTimeout(() => successMessage.style.display = 'none', 3000);
-    }
-
-    function showError(message) {
-        successMessage.textContent = message;
-        successMessage.style.display = 'block';
-        successMessage.style.backgroundColor = 'var(--danger)';
-        setTimeout(() => successMessage.style.display = 'none', 3000);
-    }
-
-    // Make deleteProduct global for onclick events
-    window.deleteProduct = deleteProduct;
-</script>
+        // Make deleteProduct global for onclick events
+        window.deleteProduct = deleteProduct;
+    </script>
 </body>
 </html>
-
-
-
