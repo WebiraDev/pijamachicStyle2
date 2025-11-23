@@ -312,6 +312,342 @@
                 text-align: center;
             }
         }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #8a1c1c;
+            --secondary: #ac0404;
+            --accent: #3498db;
+            --light: #ecf0f1;
+            --dark: #343232;
+            --gray: #95a5a6;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        /* Access Denied Styles */
+        .access-denied {
+            display: none;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .access-denied-content h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Login Section Styles */
+        .login-section {
+            display: none;
+            min-height: 100vh;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .login-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-title {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: var(--dark);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent);
+        }
+
+        .login-btn, .submit-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .login-btn:hover, .submit-btn:hover {
+            background: var(--secondary);
+        }
+
+        .error-message {
+            color: var(--danger);
+            text-align: center;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        /* Admin Panel Styles */
+        .admin-panel {
+            display: none;
+        }
+
+        .admin-header {
+            background: var(--dark);
+            color: white;
+            padding: 1rem 0;
+        }
+
+        .admin-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .admin-title {
+            font-size: 1.5rem;
+        }
+
+        .admin-title span {
+            color: var(--accent);
+        }
+
+        .logout-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .admin-content {
+            padding: 2rem 0;
+        }
+
+        .admin-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            margin-bottom: 1.5rem;
+            color: var(--dark);
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 0.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .file-upload {
+            border: 2px dashed #ddd;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .file-upload:hover {
+            border-color: var(--accent);
+        }
+
+        .image-preview {
+            margin-top: 1rem;
+        }
+
+        .image-preview img {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 5px;
+        }
+
+        .products-list, .orders-list, .comments-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .product-item, .order-item, .comment-item {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            gap: 1rem;
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            background-size: cover;
+            background-position: center;
+            border-radius: 5px;
+        }
+
+        .product-details, .order-details, .comment-details {
+            flex: 1;
+        }
+
+        .product-name, .order-id, .comment-author {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-price {
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .product-category, .order-date, .comment-date {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .product-actions, .order-actions, .comment-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .delete-btn, .mark-btn {
+            background: var(--danger);
+            color: white;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .mark-btn {
+            background: var(--success);
+        }
+
+        .success-message {
+            display: none;
+            padding: 1rem;
+            background: var(--success);
+            color: white;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .order-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .status-completed {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .status-cancelled {
+            background-color: var(--danger);
+            color: white;
+        }
+
+        .debug-info {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-family: monospace;
+            font-size: 0.8rem;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .debug-toggle {
+            background: var(--gray);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 1rem;
+            font-size: 0.8rem;
+        }
+
+        .loading {
+            opacity: 0.6;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .product-item, .order-item, .comment-item {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
     </style>
 </head>
 <body>
@@ -360,6 +696,8 @@
                 <!-- Add Product Section -->
                 <section class="admin-section">
                     <h2 class="section-title">Ajouter un Produit</h2>
+                    <button type="button" class="debug-toggle" onclick="toggleDebug()">Afficher les informations de débogage</button>
+                    <div class="debug-info" id="debug-info"></div>
                     <form class="add-product-form" id="add-product-form">
                         <div class="form-group">
                             <label for="product-name">Nom du produit</label>
@@ -398,12 +736,12 @@
                             <label>Image du produit</label>
                             <div class="file-upload" id="file-upload">
                                 <i class="fas fa-cloud-upload-alt"></i>
-                                <p>Cliquez pour télécharger une image</p>
+                                <p>Cliquez pour télécharger une image (max 100MB)</p>
                                 <input type="file" id="product-image" accept="image/*" required>
                             </div>
                             <div class="image-preview" id="image-preview"></div>
                         </div>
-                        <button type="submit" class="submit-btn">Ajouter le produit</button>
+                        <button type="submit" class="submit-btn" id="submit-btn">Ajouter le produit</button>
                     </form>
                 </section>
 
@@ -411,7 +749,7 @@
                 <section class="admin-section">
                     <h2 class="section-title">Gérer les Produits</h2>
                     <div class="products-list" id="products-list">
-                        <!-- Products will be loaded here -->
+                        <p>Chargement des produits...</p>
                     </div>
                 </section>
 
@@ -419,7 +757,7 @@
                 <section class="admin-section">
                     <h2 class="section-title">Commandes</h2>
                     <div class="orders-list" id="orders-list">
-                        <!-- Orders will be loaded here -->
+                        <p>Chargement des commandes...</p>
                     </div>
                 </section>
 
@@ -427,7 +765,7 @@
                 <section class="admin-section">
                     <h2 class="section-title">Commentaires</h2>
                     <div class="comments-list" id="comments-list">
-                        <!-- Comments will be loaded here -->
+                        <p>Chargement des commentaires...</p>
                     </div>
                 </section>
             </div>
@@ -435,7 +773,7 @@
     </div>
 
     <script>
-        // Configuration - USE THE WEB APP URL FROM GOOGLE APPS SCRIPT DEPLOYMENT
+        // Configuration - REPLACE WITH YOUR ACTUAL GOOGLE SCRIPT URL
         const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxmPSxbKfLJqUs4zQG7xMGCABuYIRulxxlNUYxGrvbYYjjZarNwg2hvpiQF0Q3GswvI3g/exec';
 
         // Admin credentials
@@ -450,6 +788,7 @@
         const loginError = document.getElementById('login-error');
         const logoutBtn = document.getElementById('logout-btn');
         const addProductForm = document.getElementById('add-product-form');
+        const submitBtn = document.getElementById('submit-btn');
         const productsList = document.getElementById('products-list');
         const ordersList = document.getElementById('orders-list');
         const commentsList = document.getElementById('comments-list');
@@ -457,24 +796,45 @@
         const productImageInput = document.getElementById('product-image');
         const imagePreview = document.getElementById('image-preview');
         const successMessage = document.getElementById('success-message');
+        const debugInfo = document.getElementById('debug-info');
 
-        // Google Sheets API functions
+        // Debug function
+        function addDebugInfo(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            debugInfo.innerHTML += `[${timestamp}] ${message}\n`;
+            debugInfo.scrollTop = debugInfo.scrollHeight;
+        }
+
+        function toggleDebug() {
+            debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+        }
+
+        // Google Sheets API functions with better error handling
         async function saveProductToSheet(productData) {
             try {
+                addDebugInfo('Envoi du produit vers Google Sheets...');
+                
+                const requestBody = {
+                    action: 'addProduct',
+                    data: productData
+                };
+
+                addDebugInfo('Envoi de la requête POST...');
                 const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({
-                        action: 'addProduct',
-                        data: productData
-                    })
+                    body: JSON.stringify(requestBody)
                 });
                 
+                addDebugInfo('Réponse reçue, statut: ' + response.status);
                 const result = await response.json();
+                addDebugInfo('Résultat: ' + JSON.stringify(result));
+                
                 return result.success;
             } catch (error) {
+                addDebugInfo('Erreur lors de l\'envoi: ' + error.message);
                 console.error('Error saving product:', error);
                 return false;
             }
@@ -482,10 +842,18 @@
 
         async function loadProductsFromSheet() {
             try {
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProducts`);
+                addDebugInfo('Chargement des produits...');
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProducts&timestamp=${Date.now()}`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
                 const result = await response.json();
+                addDebugInfo(`${result.data ? result.data.length : 0} produits chargés`);
                 return result.data || [];
             } catch (error) {
+                addDebugInfo('Erreur chargement produits: ' + error.message);
                 console.error('Error loading products:', error);
                 return [];
             }
@@ -515,7 +883,7 @@
         // Orders functions
         async function loadOrdersFromSheet() {
             try {
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders`);
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders&timestamp=${Date.now()}`);
                 const result = await response.json();
                 return result.data || [];
             } catch (error) {
@@ -549,7 +917,7 @@
         // Comments functions
         async function loadCommentsFromSheet() {
             try {
-                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getComments`);
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getComments&timestamp=${Date.now()}`);
                 const result = await response.json();
                 return result.data || [];
             } catch (error) {
@@ -579,13 +947,19 @@
             }
         }
 
-        // Image to Base64 conversion (works on mobile)
+        // Image to Base64 conversion with better error handling
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
-                reader.onload = () => resolve(reader.result);
-                reader.onerror = error => reject(error);
+                reader.onload = () => {
+                    addDebugInfo('Image convertie en base64, taille: ' + reader.result.length + ' caractères');
+                    resolve(reader.result);
+                };
+                reader.onerror = error => {
+                    addDebugInfo('Erreur conversion image: ' + error);
+                    reject(error);
+                };
             });
         }
 
@@ -634,6 +1008,8 @@
                 const file = e.target.files[0];
                 if (file) {
                     try {
+                        addDebugInfo('Fichier sélectionné: ' + file.name + ', taille: ' + file.size + ' bytes, type: ' + file.type);
+                        
                         // Check file size (max 100MB)
                         if (file.size > 100 * 1024 * 1024) {
                             showError('L\'image est trop volumineuse. Maximum 100MB.');
@@ -643,7 +1019,7 @@
                         const base64 = await fileToBase64(file);
                         imagePreview.innerHTML = `<img src="${base64}" alt="Preview">`;
                     } catch (error) {
-                        showError('Erreur lors du chargement de l\'image');
+                        showError('Erreur lors du chargement de l\'image: ' + error.message);
                     }
                 }
             });
@@ -664,8 +1040,14 @@
                     return;
                 }
 
+                // Show loading state
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ajout en cours...';
+                addProductForm.classList.add('loading');
+
                 try {
-                    const imageBase64 = await fileToBase64(imageFile);
+                    addDebugInfo('Début de l\'ajout du produit...');
+                    const imageBase64 = await fileToBase64(file);
                     
                     const productData = {
                         id: Date.now(),
@@ -684,18 +1066,25 @@
                         showSuccess('Produit ajouté avec succès!');
                         addProductForm.reset();
                         imagePreview.innerHTML = '';
-                        loadProducts();
+                        await loadProducts();
                     } else {
-                        showError('Erreur lors de l\'ajout du produit');
+                        showError('Erreur lors de l\'ajout du produit. Vérifiez les informations de débogage.');
                     }
                 } catch (error) {
                     showError('Erreur lors de l\'ajout du produit: ' + error.message);
+                    addDebugInfo('Erreur détaillée: ' + error.stack);
+                } finally {
+                    // Reset loading state
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = 'Ajouter le produit';
+                    addProductForm.classList.remove('loading');
                 }
             });
         }
 
         async function loadProducts() {
             try {
+                productsList.innerHTML = '<p>Chargement des produits...</p>';
                 const products = await loadProductsFromSheet();
                 productsList.innerHTML = '';
                 
@@ -713,10 +1102,11 @@
                             <div class="product-name">${product.name}</div>
                             <div class="product-price">${product.price} MAD</div>
                             <div class="product-category">${product.category} | ${product.collection}</div>
+                            <div class="product-date">Ajouté le: ${new Date(product.date_added).toLocaleDateString('fr-FR')}</div>
                         </div>
                         <div class="product-actions">
                             <button class="delete-btn" onclick="deleteProduct(${product.id})">
-                                <i class="fas fa-trash"></i>
+                                <i class="fas fa-trash"></i> Supprimer
                             </button>
                         </div>
                     `;
@@ -730,6 +1120,7 @@
 
         async function loadOrders() {
             try {
+                ordersList.innerHTML = '<p>Chargement des commandes...</p>';
                 const orders = await loadOrdersFromSheet();
                 ordersList.innerHTML = '';
                 
@@ -743,17 +1134,26 @@
                     orderItem.className = 'order-item';
                     
                     let statusClass = 'status-pending';
-                    if (order.status === 'completed') statusClass = 'status-completed';
-                    if (order.status === 'cancelled') statusClass = 'status-cancelled';
+                    let statusText = 'En attente';
+                    if (order.status === 'completed') {
+                        statusClass = 'status-completed';
+                        statusText = 'Terminée';
+                    }
+                    if (order.status === 'cancelled') {
+                        statusClass = 'status-cancelled';
+                        statusText = 'Annulée';
+                    }
                     
                     orderItem.innerHTML = `
                         <div class="order-details">
                             <div class="order-id">Commande #${order.id}</div>
-                            <div class="order-customer">Client: ${order.customerName}</div>
-                            <div class="order-products">Produits: ${order.products}</div>
-                            <div class="order-total">Total: ${order.total} MAD</div>
-                            <div class="order-date">Date: ${new Date(order.date).toLocaleDateString('fr-FR')}</div>
-                            <div class="order-status ${statusClass}">${order.status}</div>
+                            <div class="order-customer"><strong>Client:</strong> ${order.customerName}</div>
+                            <div class="order-contact"><strong>Email:</strong> ${order.customerEmail} | <strong>Tél:</strong> ${order.customerPhone}</div>
+                            <div class="order-products"><strong>Produits:</strong> ${order.products}</div>
+                            <div class="order-total"><strong>Total:</strong> ${order.total} MAD</div>
+                            <div class="order-address"><strong>Adresse:</strong> ${order.address}</div>
+                            <div class="order-date"><strong>Date:</strong> ${new Date(order.date).toLocaleDateString('fr-FR')}</div>
+                            <div class="order-status ${statusClass}">${statusText}</div>
                         </div>
                         <div class="order-actions">
                             ${order.status === 'pending' ? `
@@ -763,6 +1163,12 @@
                                 <button class="delete-btn" onclick="updateOrder(${order.id}, 'cancelled')">
                                     <i class="fas fa-times"></i> Annuler
                                 </button>
+                            ` : ''}
+                            ${order.status === 'completed' ? `
+                                <span class="status-completed" style="padding: 0.5rem;"><i class="fas fa-check"></i> Commande terminée</span>
+                            ` : ''}
+                            ${order.status === 'cancelled' ? `
+                                <span class="status-cancelled" style="padding: 0.5rem;"><i class="fas fa-times"></i> Commande annulée</span>
                             ` : ''}
                         </div>
                     `;
@@ -776,6 +1182,7 @@
 
         async function loadComments() {
             try {
+                commentsList.innerHTML = '<p>Chargement des commentaires...</p>';
                 const comments = await loadCommentsFromSheet();
                 commentsList.innerHTML = '';
                 
@@ -787,15 +1194,25 @@
                 comments.forEach(comment => {
                     const commentItem = document.createElement('div');
                     commentItem.className = 'comment-item';
+                    
+                    // Create star rating
+                    const rating = comment.rating || 5;
+                    let stars = '';
+                    for (let i = 0; i < 5; i++) {
+                        stars += i < rating ? '★' : '☆';
+                    }
+                    
                     commentItem.innerHTML = `
                         <div class="comment-details">
-                            <div class="comment-author">${comment.author}</div>
+                            <div class="comment-author">${comment.author} <span style="color: gold;">${stars}</span></div>
                             <div class="comment-text">${comment.text}</div>
-                            <div class="comment-date">${new Date(comment.date).toLocaleDateString('fr-FR')}</div>
+                            <div class="comment-email"><strong>Email:</strong> ${comment.email}</div>
+                            <div class="comment-date">Posté le: ${new Date(comment.date).toLocaleDateString('fr-FR')}</div>
+                            ${comment.productId ? `<div class="comment-product"><strong>Produit ID:</strong> ${comment.productId}</div>` : ''}
                         </div>
                         <div class="comment-actions">
                             <button class="delete-btn" onclick="deleteComment(${comment.id})">
-                                <i class="fas fa-trash"></i>
+                                <i class="fas fa-trash"></i> Supprimer
                             </button>
                         </div>
                     `;
@@ -820,9 +1237,12 @@
         }
 
         async function updateOrder(orderId, status) {
+            const statusText = status === 'completed' ? 'terminée' : 'annulée';
+            if (!confirm(`Êtes-vous sûr de vouloir marquer cette commande comme ${statusText}?`)) return;
+            
             const updated = await updateOrderStatus(orderId, status);
             if (updated) {
-                showSuccess('Statut de commande mis à jour!');
+                showSuccess(`Statut de commande mis à jour!`);
                 loadOrders();
             } else {
                 showError('Erreur lors de la mise à jour de la commande');
@@ -860,20 +1280,21 @@
             successMessage.textContent = message;
             successMessage.style.display = 'block';
             successMessage.style.backgroundColor = 'var(--success)';
-            setTimeout(() => successMessage.style.display = 'none', 3000);
+            setTimeout(() => successMessage.style.display = 'none', 5000);
         }
 
         function showError(message) {
             successMessage.textContent = message;
             successMessage.style.display = 'block';
             successMessage.style.backgroundColor = 'var(--danger)';
-            setTimeout(() => successMessage.style.display = 'none', 3000);
+            setTimeout(() => successMessage.style.display = 'none', 7000);
         }
 
         // Make functions global for onclick events
         window.deleteProduct = deleteProduct;
         window.updateOrder = updateOrder;
         window.deleteComment = deleteComment;
+        window.toggleDebug = toggleDebug;
     </script>
 </body>
 </html>
