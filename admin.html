@@ -210,12 +210,12 @@
             border-radius: 5px;
         }
 
-        .products-list {
+        .products-list, .orders-list, .comments-list {
             display: grid;
             gap: 1rem;
         }
 
-        .product-item {
+        .product-item, .order-item, .comment-item {
             display: flex;
             align-items: center;
             padding: 1rem;
@@ -232,11 +232,11 @@
             border-radius: 5px;
         }
 
-        .product-details {
+        .product-details, .order-details, .comment-details {
             flex: 1;
         }
 
-        .product-name {
+        .product-name, .order-id, .comment-author {
             font-weight: bold;
             margin-bottom: 0.5rem;
         }
@@ -246,23 +246,27 @@
             font-weight: bold;
         }
 
-        .product-category {
+        .product-category, .order-date, .comment-date {
             color: var(--gray);
             font-size: 0.9rem;
         }
 
-        .product-actions {
+        .product-actions, .order-actions, .comment-actions {
             display: flex;
             gap: 0.5rem;
         }
 
-        .delete-btn {
+        .delete-btn, .mark-btn {
             background: var(--danger);
             color: white;
             border: none;
             padding: 0.5rem;
             border-radius: 5px;
             cursor: pointer;
+        }
+
+        .mark-btn {
+            background: var(--success);
         }
 
         .success-message {
@@ -275,12 +279,35 @@
             text-align: center;
         }
 
+        .order-status {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .status-pending {
+            background-color: var(--warning);
+            color: white;
+        }
+
+        .status-completed {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .status-cancelled {
+            background-color: var(--danger);
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .form-row {
                 grid-template-columns: 1fr;
             }
             
-            .product-item {
+            .product-item, .order-item, .comment-item {
                 flex-direction: column;
                 text-align: center;
             }
@@ -387,6 +414,22 @@
                         <!-- Products will be loaded here -->
                     </div>
                 </section>
+
+                <!-- Orders Section -->
+                <section class="admin-section">
+                    <h2 class="section-title">Commandes</h2>
+                    <div class="orders-list" id="orders-list">
+                        <!-- Orders will be loaded here -->
+                    </div>
+                </section>
+
+                <!-- Comments Section -->
+                <section class="admin-section">
+                    <h2 class="section-title">Commentaires</h2>
+                    <div class="comments-list" id="comments-list">
+                        <!-- Comments will be loaded here -->
+                    </div>
+                </section>
             </div>
         </div>
     </div>
@@ -408,6 +451,8 @@
         const logoutBtn = document.getElementById('logout-btn');
         const addProductForm = document.getElementById('add-product-form');
         const productsList = document.getElementById('products-list');
+        const ordersList = document.getElementById('orders-list');
+        const commentsList = document.getElementById('comments-list');
         const fileUpload = document.getElementById('file-upload');
         const productImageInput = document.getElementById('product-image');
         const imagePreview = document.getElementById('image-preview');
@@ -467,6 +512,73 @@
             }
         }
 
+        // Orders functions
+        async function loadOrdersFromSheet() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders`);
+                const result = await response.json();
+                return result.data || [];
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                return [];
+            }
+        }
+
+        async function updateOrderStatus(orderId, status) {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'updateOrderStatus',
+                        orderId: orderId,
+                        status: status
+                    })
+                });
+                
+                const result = await response.json();
+                return result.success;
+            } catch (error) {
+                console.error('Error updating order:', error);
+                return false;
+            }
+        }
+
+        // Comments functions
+        async function loadCommentsFromSheet() {
+            try {
+                const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getComments`);
+                const result = await response.json();
+                return result.data || [];
+            } catch (error) {
+                console.error('Error loading comments:', error);
+                return [];
+            }
+        }
+
+        async function deleteCommentFromSheet(commentId) {
+            try {
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'deleteComment',
+                        commentId: commentId
+                    })
+                });
+                
+                const result = await response.json();
+                return result.success;
+            } catch (error) {
+                console.error('Error deleting comment:', error);
+                return false;
+            }
+        }
+
         // Image to Base64 conversion (works on mobile)
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
@@ -522,9 +634,9 @@
                 const file = e.target.files[0];
                 if (file) {
                     try {
-                        // Check file size (max 5MB)
+                        // Check file size (max 100MB)
                         if (file.size > 100 * 1024 * 1024) {
-                            showError('L\'image est trop volumineuse. Maximum 5MB.');
+                            showError('L\'image est trop volumineuse. Maximum 100MB.');
                             return;
                         }
                         
@@ -616,6 +728,85 @@
             }
         }
 
+        async function loadOrders() {
+            try {
+                const orders = await loadOrdersFromSheet();
+                ordersList.innerHTML = '';
+                
+                if (orders.length === 0) {
+                    ordersList.innerHTML = '<p>Aucune commande trouvée.</p>';
+                    return;
+                }
+                
+                orders.forEach(order => {
+                    const orderItem = document.createElement('div');
+                    orderItem.className = 'order-item';
+                    
+                    let statusClass = 'status-pending';
+                    if (order.status === 'completed') statusClass = 'status-completed';
+                    if (order.status === 'cancelled') statusClass = 'status-cancelled';
+                    
+                    orderItem.innerHTML = `
+                        <div class="order-details">
+                            <div class="order-id">Commande #${order.id}</div>
+                            <div class="order-customer">Client: ${order.customerName}</div>
+                            <div class="order-products">Produits: ${order.products}</div>
+                            <div class="order-total">Total: ${order.total} MAD</div>
+                            <div class="order-date">Date: ${new Date(order.date).toLocaleDateString('fr-FR')}</div>
+                            <div class="order-status ${statusClass}">${order.status}</div>
+                        </div>
+                        <div class="order-actions">
+                            ${order.status === 'pending' ? `
+                                <button class="mark-btn" onclick="updateOrder(${order.id}, 'completed')">
+                                    <i class="fas fa-check"></i> Terminer
+                                </button>
+                                <button class="delete-btn" onclick="updateOrder(${order.id}, 'cancelled')">
+                                    <i class="fas fa-times"></i> Annuler
+                                </button>
+                            ` : ''}
+                        </div>
+                    `;
+                    ordersList.appendChild(orderItem);
+                });
+            } catch (error) {
+                console.error('Error loading orders:', error);
+                ordersList.innerHTML = '<p>Erreur lors du chargement des commandes</p>';
+            }
+        }
+
+        async function loadComments() {
+            try {
+                const comments = await loadCommentsFromSheet();
+                commentsList.innerHTML = '';
+                
+                if (comments.length === 0) {
+                    commentsList.innerHTML = '<p>Aucun commentaire trouvé.</p>';
+                    return;
+                }
+                
+                comments.forEach(comment => {
+                    const commentItem = document.createElement('div');
+                    commentItem.className = 'comment-item';
+                    commentItem.innerHTML = `
+                        <div class="comment-details">
+                            <div class="comment-author">${comment.author}</div>
+                            <div class="comment-text">${comment.text}</div>
+                            <div class="comment-date">${new Date(comment.date).toLocaleDateString('fr-FR')}</div>
+                        </div>
+                        <div class="comment-actions">
+                            <button class="delete-btn" onclick="deleteComment(${comment.id})">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    `;
+                    commentsList.appendChild(commentItem);
+                });
+            } catch (error) {
+                console.error('Error loading comments:', error);
+                commentsList.innerHTML = '<p>Erreur lors du chargement des commentaires</p>';
+            }
+        }
+
         async function deleteProduct(productId) {
             if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) return;
             
@@ -625,6 +816,28 @@
                 loadProducts();
             } else {
                 showError('Erreur lors de la suppression du produit');
+            }
+        }
+
+        async function updateOrder(orderId, status) {
+            const updated = await updateOrderStatus(orderId, status);
+            if (updated) {
+                showSuccess('Statut de commande mis à jour!');
+                loadOrders();
+            } else {
+                showError('Erreur lors de la mise à jour de la commande');
+            }
+        }
+
+        async function deleteComment(commentId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire?')) return;
+            
+            const deleted = await deleteCommentFromSheet(commentId);
+            if (deleted) {
+                showSuccess('Commentaire supprimé avec succès!');
+                loadComments();
+            } else {
+                showError('Erreur lors de la suppression du commentaire');
             }
         }
 
@@ -639,6 +852,8 @@
             adminPanel.style.display = 'block';
             accessDenied.style.display = 'none';
             loadProducts();
+            loadOrders();
+            loadComments();
         }
 
         function showSuccess(message) {
@@ -655,9 +870,10 @@
             setTimeout(() => successMessage.style.display = 'none', 3000);
         }
 
-        // Make deleteProduct global for onclick events
+        // Make functions global for onclick events
         window.deleteProduct = deleteProduct;
+        window.updateOrder = updateOrder;
+        window.deleteComment = deleteComment;
     </script>
 </body>
 </html>
-
