@@ -523,7 +523,7 @@
                 if (file) {
                     try {
                         // Check file size (max 5MB)
-                        if (file.size > 5 * 1024 * 1024) {
+                        if (file.size > 100 * 1024 * 1024) {
                             showError('L\'image est trop volumineuse. Maximum 5MB.');
                             return;
                         }
@@ -660,3 +660,4 @@
     </script>
 </body>
 </html>
+
