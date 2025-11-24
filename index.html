@@ -6,6 +6,9 @@
     <meta name="keywords" content="pijama,Chicstyle,Casablanca">
     <title>Pijama Chic Style 🦋🩸</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Add to all pages before closing </head> -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
     <style>
         * {
             margin: 0;
@@ -1142,9 +1145,7 @@
             </div>
         </footer>
     </div>
-<!-- Add to all pages before closing </head> -->
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+
 
 <script>
 // Firebase Configuration
@@ -1164,34 +1165,9 @@ const db = firebase.firestore();
 
 // Global cart variable
 let cart = JSON.parse(localStorage.getItem('pijamachic-cart')) || [];
-</script>
-   <script>
-       
-let products = JSON.parse(localStorage.getItem('pijamachic-products')) || [];
-
-// Shopping cart data
-let cart = JSON.parse(localStorage.getItem('pijamachic-cart')) || [];
-
-// Orders data
-let orders = JSON.parse(localStorage.getItem('pijamachic-orders')) || [];
-
-function saveProductsToStorage() {
-    localStorage.setItem('pijamachic-products', JSON.stringify(products));
-}
-
-function saveCartToStorage() {
-    localStorage.setItem('pijamachic-cart', JSON.stringify(cart));
-}
-
-function saveOrdersToStorage() {
-    localStorage.setItem('pijamachic-orders', JSON.stringify(orders));
-}
 
 // DOM Elements
-const mainStore = document.getElementById('main-store');
 const productsContainer = document.getElementById('products-container');
-
-// Cart elements
 const cartIcon = document.getElementById('cart-icon');
 const cartCount = document.getElementById('cart-count');
 const cartSidebar = document.getElementById('cart-sidebar');
@@ -1200,22 +1176,18 @@ const cartItems = document.getElementById('cart-items');
 const cartTotalPrice = document.getElementById('cart-total-price');
 const checkoutBtn = document.getElementById('checkout-btn');
 const cartOverlay = document.getElementById('cart-overlay');
-
-// Mobile elements
 const hamburgerMenu = document.getElementById('hamburger-menu');
 const mobileMenu = document.getElementById('mobile-menu');
 const closeMenu = document.getElementById('close-menu');
 const menuOverlay = document.getElementById('menu-overlay');
-
-// Checkout form elements
 const checkoutFormOverlay = document.getElementById('checkout-form-overlay');
 const checkoutForm = document.getElementById('checkout-form');
 const cancelOrderBtn = document.getElementById('cancel-order');
 
-// ========== FIXED: Single DOMContentLoaded event ==========
+// ========== DOMContentLoaded event ==========
 document.addEventListener('DOMContentLoaded', function() {
-    // Load products from admin storage
-    loadProductsFromAdmin();
+    // Load products from Firebase
+    loadProductsFromFirebase();
     
     // Initialize slideshow
     initSlideshow();
@@ -1231,7 +1203,6 @@ document.addEventListener('DOMContentLoaded', function() {
     initCheckoutForm();
 });
 
-// Load products from admin storage
 // Load products from Firebase
 async function loadProductsFromFirebase() {
     try {
@@ -1264,148 +1235,6 @@ async function loadProductsFromFirebase() {
     }
 }
 
-// Get image URL from uploaded file
-function getProductImageUrl(product) {
-    if (!product.image) {
-        return 'https://via.placeholder.com/300x300?text=No+Image';
-    }
-    
-    // If image is a File object (from file input)
-    if (product.image instanceof File) {
-        return URL.createObjectURL(product.image);
-    }
-    
-    // If image is already a data URL
-    if (typeof product.image === 'string' && product.image.startsWith('data:')) {
-        return product.image;
-    }
-    
-    // If image is a base64 string
-    if (typeof product.image === 'string' && product.image.length > 100) {
-        return `data:image/jpeg;base64,${product.image}`;
-    }
-    
-    // If image is stored as an object with file data
-    if (typeof product.image === 'object' && product.image.fileData) {
-        return `data:${product.image.fileType || 'image/jpeg'};base64,${product.image.fileData}`;
-    }
-    
-    return 'https://via.placeholder.com/300x300?text=No+Image';
-}
-
-// Initialize mobile menu
-function initMobileMenu() {
-    // Click functionality for mobile menu
-    hamburgerMenu.addEventListener('click', function() {
-        mobileMenu.classList.add('active');
-        menuOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    });
-
-    // Close menu events
-    closeMenu.addEventListener('click', function() {
-        mobileMenu.classList.remove('active');
-        menuOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-    });
-
-    menuOverlay.addEventListener('click', function() {
-        mobileMenu.classList.remove('active');
-        menuOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-    });
-}
-
-// Initialize checkout form
-function initCheckoutForm() {
-    // Checkout button - show checkout form
-    checkoutBtn.addEventListener('click', function() {
-        if (cart.length === 0) {
-            alert('Votre Panier est vide!');
-            return;
-        }
-        
-        // Show checkout form
-        checkoutFormOverlay.classList.add('active');
-        document.body.style.overflow = 'hidden';
-    });
-
-    // Cancel order button
-    cancelOrderBtn.addEventListener('click', function() {
-        checkoutFormOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-    });
-
-    // Submit order form
-    checkoutForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        // Get form data
-        const customerName = document.getElementById('customer-name').value;
-        const customerPhone = document.getElementById('customer-phone').value;
-        const customerAddress = document.getElementById('customer-address').value;
-        const customerNotes = document.getElementById('customer-notes').value;
-        
-        // Calculate total
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-        
-        // Create order object
-        const order = {
-            id: Date.now(), // Simple ID based on timestamp
-            date: new Date().toLocaleString(),
-            customer: {
-                name: customerName,
-                phone: customerPhone,
-                address: customerAddress,
-                notes: customerNotes
-            },
-            items: [...cart],
-            total: total,
-            status: 'pending'
-        };
-        
-        // Add to orders
-        orders.push(order);
-        saveOrdersToStorage();
-        
-        // Clear cart
-        cart = [];
-        saveCartToStorage();
-        updateCartUI();
-        
-        // Close checkout form and cart
-        checkoutFormOverlay.classList.remove('active');
-        cartSidebar.classList.remove('active');
-        cartOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-        
-        // Reset form
-        checkoutForm.reset();
-        
-        // Show success message
-        showNotification('Commande passée avec succès!');
-    });
-}
-
-// Show notification
-// Show notification with different types
-function showNotification(message, type = 'success') {
-    const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
-    notification.innerHTML = `
-        <span>${message}</span>
-        <button onclick="this.parentElement.remove()">&times;</button>
-    `;
-    
-    document.body.appendChild(notification);
-    
-    // Auto remove after 5 seconds
-    setTimeout(() => {
-        if (notification.parentElement) {
-            notification.remove();
-        }
-    }, 5000);
-}
 // Render products from Firebase
 function renderProducts(products) {
     productsContainer.innerHTML = '';
@@ -1436,6 +1265,133 @@ function renderProducts(products) {
         `;
         productsContainer.appendChild(productCard);
     });
+}
+
+// Initialize mobile menu
+function initMobileMenu() {
+    // Click functionality for mobile menu
+    hamburgerMenu.addEventListener('click', function() {
+        mobileMenu.classList.add('active');
+        menuOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    // Close menu events
+    closeMenu.addEventListener('click', function() {
+        mobileMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    menuOverlay.addEventListener('click', function() {
+        mobileMenu.classList.remove('active');
+        menuOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+}
+
+// Initialize checkout form
+function initCheckoutForm() {
+    // Checkout button - show checkout form
+    checkoutBtn.addEventListener('click', function() {
+        if (cart.length === 0) {
+            showNotification('Votre panier est vide!', 'error');
+            return;
+        }
+        
+        // Show checkout form
+        checkoutFormOverlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    });
+
+    // Cancel order button
+    cancelOrderBtn.addEventListener('click', function() {
+        checkoutFormOverlay.classList.remove('active');
+        document.body.style.overflow = '';
+    });
+
+    // Submit order form
+    checkoutForm.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        if (cart.length === 0) {
+            showNotification('Votre panier est vide!', 'error');
+            return;
+        }
+        
+        // Get form data
+        const customerName = document.getElementById('customer-name').value;
+        const customerPhone = document.getElementById('customer-phone').value;
+        const customerAddress = document.getElementById('customer-address').value;
+        const customerNotes = document.getElementById('customer-notes').value;
+        
+        // Calculate total
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        
+        try {
+            // Create order object for Firebase
+            const order = {
+                customerName: customerName,
+                email: '', // You can add email field to your form if needed
+                customerPhone: customerPhone,
+                address: customerAddress,
+                notes: customerNotes,
+                products: cart.map(item => ({
+                    id: item.id,
+                    name: item.name,
+                    price: item.price,
+                    quantity: item.quantity
+                })),
+                total: total,
+                status: 'pending',
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            // Save to Firebase
+            await db.collection('orders').add(order);
+            
+            // Clear cart
+            cart = [];
+            saveCartToStorage();
+            updateCartUI();
+            
+            // Close checkout form and cart
+            checkoutFormOverlay.classList.remove('active');
+            cartSidebar.classList.remove('active');
+            cartOverlay.classList.remove('active');
+            document.body.style.overflow = '';
+            
+            // Reset form
+            checkoutForm.reset();
+            
+            // Show success message
+            showNotification('Commande passée avec succès! Nous vous contacterons bientôt.');
+            
+        } catch (error) {
+            console.error('Error submitting order:', error);
+            showNotification('Erreur lors de la commande: ' + error.message, 'error');
+        }
+    });
+}
+
+// Show notification with different types
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.className = `notification notification-${type}`;
+    notification.innerHTML = `
+        <span>${message}</span>
+        <button onclick="this.parentElement.remove()">&times;</button>
+    `;
+    
+    document.body.appendChild(notification);
+    
+    // Auto remove after 5 seconds
+    setTimeout(() => {
+        if (notification.parentElement) {
+            notification.remove();
+        }
+    }, 5000);
 }
 
 // Initialize slideshow
@@ -1471,7 +1427,7 @@ function initSlideshow() {
     });
 }
 
-// ========== FIXED: Cart functionality ==========
+// Initialize cart functionality
 function initCart() {
     // Cart icon click event
     cartIcon.addEventListener('click', function() {
@@ -1496,7 +1452,7 @@ function initCart() {
     // Add to cart buttons - Event delegation for dynamically created buttons
     document.addEventListener('click', function(e) {
         if (e.target.classList.contains('add-to-cart')) {
-            const productId = parseInt(e.target.getAttribute('data-id'));
+            const productId = e.target.getAttribute('data-id');
             addToCart(productId);
             
             // Auto-open cart on mobile after adding item
@@ -1509,7 +1465,6 @@ function initCart() {
     });
 }
 
-// Add product to cart
 // Add product to cart with Firebase data
 async function addToCart(productId) {
     try {
@@ -1540,6 +1495,7 @@ async function addToCart(productId) {
             showNotification(`${product.name} ajouté au panier!`);
         } else {
             console.error('Product not found in database:', productId);
+            showNotification('Produit non trouvé', 'error');
         }
     } catch (error) {
         console.error('Error adding to cart:', error);
@@ -1548,45 +1504,61 @@ async function addToCart(productId) {
 }
 
 // Update cart UI
-cart.forEach(item => {
-    const cartItem = document.createElement('div');
-    cartItem.className = 'cart-item';
-    cartItem.innerHTML = `
-        <div class="cart-item-image" style="background-image: url('${item.imageUrl}');"></div>
-        <div class="cart-item-details">
-            <div class="cart-item-name">${item.name}</div>
-            <div class="cart-item-price">${item.price.toFixed(2)} MAD</div>
-            <div class="cart-item-controls">
-                <button class="quantity-btn decrease-quantity" data-id="${item.id}">-</button>
-                <span class="cart-item-quantity">${item.quantity}</span>
-                <button class="quantity-btn increase-quantity" data-id="${item.id}">+</button>
-                <button class="remove-item" data-id="${item.id}">
-                    <i class="fas fa-trash"></i>
-                </button>
+function updateCartUI() {
+    // Update cart count
+    const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+    cartCount.textContent = totalItems;
+    
+    // Update cart items
+    cartItems.innerHTML = '';
+    
+    if (cart.length === 0) {
+        cartItems.innerHTML = `
+            <div class="empty-cart">
+                <i class="fas fa-shopping-bag"></i>
+                <p>Votre panier est vide</p>
             </div>
-        </div>
-    `;
-    cartItems.appendChild(cartItem);
-});
+        `;
+    } else {
+        cart.forEach(item => {
+            const cartItem = document.createElement('div');
+            cartItem.className = 'cart-item';
+            cartItem.innerHTML = `
+                <div class="cart-item-image" style="background-image: url('${item.imageUrl}');"></div>
+                <div class="cart-item-details">
+                    <div class="cart-item-name">${item.name}</div>
+                    <div class="cart-item-price">${item.price.toFixed(2)} MAD</div>
+                    <div class="cart-item-controls">
+                        <button class="quantity-btn decrease-quantity" data-id="${item.id}">-</button>
+                        <span class="cart-item-quantity">${item.quantity}</span>
+                        <button class="quantity-btn increase-quantity" data-id="${item.id}">+</button>
+                        <button class="remove-item" data-id="${item.id}">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            cartItems.appendChild(cartItem);
+        });
         
         // Add event listeners for quantity buttons
         document.querySelectorAll('.decrease-quantity').forEach(btn => {
             btn.addEventListener('click', function() {
-                const productId = parseInt(this.getAttribute('data-id'));
+                const productId = this.getAttribute('data-id');
                 updateQuantity(productId, -1);
             });
         });
         
         document.querySelectorAll('.increase-quantity').forEach(btn => {
             btn.addEventListener('click', function() {
-                const productId = parseInt(this.getAttribute('data-id'));
+                const productId = this.getAttribute('data-id');
                 updateQuantity(productId, 1);
             });
         });
         
         document.querySelectorAll('.remove-item').forEach(btn => {
             btn.addEventListener('click', function() {
-                const productId = parseInt(this.getAttribute('data-id'));
+                const productId = this.getAttribute('data-id');
                 removeFromCart(productId);
             });
         });
@@ -1597,137 +1569,7 @@ cart.forEach(item => {
     cartTotalPrice.textContent = `${totalPrice.toFixed(2)} MAD`;
 }
 
-// Update item quantity in cart
-function updateQuantity(productId, change) {
-    const item = cart.find(item => item.id === productId);
-    if (!item) return;
-    
-    item.quantity += change;
-    
-    if (item.quantity <= 0) {
-        removeFromCart(productId);
-    } else {
-        saveCartToStorage();
-        updateCartUI();
-    }
-}
-
-// Remove item from cart
-function removeFromCart(productId) {
-    cart = cart.filter(item => item.id !== productId);
-    saveCartToStorage();
-    updateCartUI();
-    
-    // Show notification
-    const product = products.find(p => p.id === productId);
-    if (product) {
-        showNotification(`${product.name} retiré du panier!`);
-    }
-}
-
-// Function to refresh products when admin adds new ones
-function refreshProducts() {
-    loadProductsFromAdmin();
-}
-
-// Clean up object URLs when page is unloaded to prevent memory leaks
-window.addEventListener('beforeunload', function() {
-    // Clean up any object URLs that were created
-    products.forEach(product => {
-        const imageUrl = getProductImageUrl(product);
-        if (imageUrl.startsWith('blob:')) {
-            URL.revokeObjectURL(imageUrl);
-        }
-    });
-    
-    // Clean up cart item object URLs
-    cart.forEach(item => {
-        if (item.image.startsWith('blob:')) {
-            URL.revokeObjectURL(item.image);
-        }
-    });
-});
-       // Submit order to Firebase
-checkoutForm.addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    if (cart.length === 0) {
-        showNotification('Votre panier est vide!', 'error');
-        return;
-    }
-    
-    // Get form data
-    const customerName = document.getElementById('customer-name').value;
-    const customerPhone = document.getElementById('customer-phone').value;
-    const customerAddress = document.getElementById('customer-address').value;
-    const customerNotes = document.getElementById('customer-notes').value;
-    
-    // Calculate total
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-    
-    try {
-        // Create order object for Firebase
-        const order = {
-            customerName: customerName,
-            email: '', // You can add email field to your form if needed
-            customerPhone: customerPhone,
-            address: customerAddress,
-            notes: customerNotes,
-            products: cart.map(item => ({
-                id: item.id,
-                name: item.name,
-                price: item.price,
-                quantity: item.quantity
-            })),
-            total: total,
-            status: 'pending',
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        
-        // Save to Firebase
-        await db.collection('orders').add(order);
-        
-        // Clear cart
-        cart = [];
-        saveCartToStorage();
-        updateCartUI();
-        
-        // Close checkout form and cart
-        checkoutFormOverlay.classList.remove('active');
-        cartSidebar.classList.remove('active');
-        cartOverlay.classList.remove('active');
-        document.body.style.overflow = '';
-        
-        // Reset form
-        checkoutForm.reset();
-        
-        // Show success message
-        showNotification('Commande passée avec succès! Nous vous contacterons bientôt.');
-        
-    } catch (error) {
-        console.error('Error submitting order:', error);
-        showNotification('Erreur lors de la commande: ' + error.message, 'error');
-    }
-});
-       document.addEventListener('DOMContentLoaded', function() {
-    // Load products from Firebase
-    loadProductsFromFirebase();
-    
-    // Initialize slideshow
-    initSlideshow();
-    
-    // Initialize cart functionality
-    initCart();
-    updateCartUI();
-    
-    // Initialize mobile menu
-    initMobileMenu();
-    
-    // Initialize checkout form
-    initCheckoutForm();
-});
-       // Save cart to localStorage
+// Save cart to localStorage
 function saveCartToStorage() {
     localStorage.setItem('pijamachic-cart', JSON.stringify(cart));
 }
@@ -1758,8 +1600,8 @@ function removeFromCart(productId) {
         showNotification(`${removedItem.name} retiré du panier!`);
     }
 }
-       
 </script>
 </body>
 
 </html>
+
