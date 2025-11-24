@@ -342,35 +342,12 @@ async function addProduct() {
         console.error('Error adding product:', err);
     }
 }
-const IMAGE_FOLDER_ID = '1YK-01Y1WkQ6SK5zO41ioJY1BVgisnHlU';
 
-function doPost(e) {
-  try {
-    const data = JSON.parse(e.postData.contents);
-    
-    if(data.action === 'uploadImage') {
-      const blob = Utilities.newBlob(Utilities.base64Decode(data.imageBlobBase64.split(",")[1]), data.imageMimeType, data.imageName);
-      const file = DriveApp.getFolderById(IMAGE_FOLDER_ID).createFile(blob);
-      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-      
-      return ContentService.createTextOutput(JSON.stringify({
-        success: true,
-        imageUrl: file.getUrl()
-      })).setMimeType(ContentService.MimeType.JSON);
-    }
-    
-  } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({
-      success: false,
-      message: err.message
-    })).setMimeType(ContentService.MimeType.JSON);
-  }
-}
 // --- UPLOAD IMAGE TO DRIVE ---
 async function uploadImageToDrive(file) {
     // For now, we'll keep using Google Apps Script for image upload
     // but only for this specific function
-    const UPLOAD_SCRIPT_URL = 'YOUR_APPS_SCRIPT_UPLOAD_URL'; // Keep only upload function
+    const UPLOAD_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzcGlTJdewApPehaPtz3jzh_0XuMnsxmXURKXyru1Bc0Z0txdK4VMZhoL2yFEjvFMvN/exec'; // Keep only upload function
     
     return new Promise((resolve) => {
         const reader = new FileReader();
@@ -596,6 +573,7 @@ loadProducts();
 
 </body>
 </html>
+
 
 
 
