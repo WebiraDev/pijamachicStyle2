@@ -5,69 +5,208 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Panel</title>
 <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    input, button, textarea { margin: 5px 0; padding: 8px; width: 100%; }
-    #debug { border: 1px solid #ccc; padding: 10px; max-height: 200px; overflow-y: scroll; }
+    body { 
+        font-family: Arial, sans-serif; 
+        margin: 20px; 
+        background-color: #f5f5f5;
+    }
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+        color: #333;
+        border-bottom: 2px solid #eee;
+        padding-bottom: 10px;
+    }
+    h2 {
+        color: #444;
+        margin-top: 30px;
+    }
+    .section {
+        background-color: #f9f9f9;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 5px;
+        border-left: 4px solid #4CAF50;
+    }
+    input, button, textarea, select { 
+        margin: 5px 0; 
+        padding: 8px; 
+        width: 100%; 
+        box-sizing: border-box;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+    }
+    button {
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    button:hover {
+        background-color: #45a049;
+    }
+    .delete-btn {
+        background-color: #f44336;
+    }
+    .delete-btn:hover {
+        background-color: #d32f2f;
+    }
+    #debug { 
+        border: 1px solid #ccc; 
+        padding: 10px; 
+        max-height: 200px; 
+        overflow-y: scroll; 
+        background-color: #f9f9f9;
+        font-family: monospace;
+        font-size: 12px;
+    }
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+    }
+    .data-table th, .data-table td {
+        border: 1px solid #ddd;
+        padding: 8px;
+        text-align: left;
+    }
+    .data-table th {
+        background-color: #f2f2f2;
+    }
+    .data-table tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+    .data-table tr:hover {
+        background-color: #f1f1f1;
+    }
+    .tab-container {
+        margin-top: 20px;
+    }
+    .tab-buttons {
+        display: flex;
+        border-bottom: 1px solid #ddd;
+    }
+    .tab-button {
+        padding: 10px 20px;
+        background-color: #f1f1f1;
+        border: none;
+        border-bottom: 2px solid transparent;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+    .tab-button.active {
+        background-color: white;
+        border-bottom: 2px solid #4CAF50;
+        font-weight: bold;
+    }
+    .tab-content {
+        display: none;
+        padding: 20px 0;
+    }
+    .tab-content.active {
+        display: block;
+    }
+    .product-image {
+        max-width: 100px;
+        max-height: 100px;
+        object-fit: cover;
+    }
+    .status-select {
+        width: auto;
+        padding: 5px;
+    }
 </style>
 </head>
 <body>
 
-<h1>Admin Panel</h1>
+<div class="container">
+    <h1>Admin Panel</h1>
+    
+    <div class="tab-container">
+        <div class="tab-buttons">
+            <button class="tab-button active" onclick="openTab('products')">Produits</button>
+            <button class="tab-button" onclick="openTab('orders')">Commandes</button>
+            <button class="tab-button" onclick="openTab('comments')">Commentaires</button>
+        </div>
+        
+        <!-- Products Tab -->
+        <div id="products" class="tab-content active">
+            <div class="section">
+                <h2>Ajouter un produit</h2>
+                <input type="text" id="productId" placeholder="ID du produit">
+                <input type="text" id="productName" placeholder="Nom du produit">
+                <input type="number" id="productPrice" placeholder="Prix">
+                <input type="text" id="productCategory" placeholder="Catégorie">
+                <input type="text" id="productCollection" placeholder="Collection">
+                <textarea id="productDescription" placeholder="Description"></textarea>
+                <input type="file" id="productImage">
+                <button onclick="addProduct()">Ajouter Produit</button>
+            </div>
 
-<h2>Ajouter un produit</h2>
-<input type="text" id="productId" placeholder="ID du produit">
-<input type="text" id="productName" placeholder="Nom du produit">
-<input type="number" id="productPrice" placeholder="Prix">
-<input type="text" id="productCategory" placeholder="Catégorie">
-<input type="text" id="productCollection" placeholder="Collection">
-<textarea id="productDescription" placeholder="Description"></textarea>
-<input type="file" id="productImage">
-<button onclick="addProduct()">Ajouter Produit</button>
+            <div class="section">
+                <h2>Produits existants</h2>
+                <div id="productsList"></div>
+            </div>
+        </div>
+        
+        <!-- Orders Tab -->
+        <div id="orders" class="tab-content">
+            <div class="section">
+                <h2>Commandes</h2>
+                <div id="ordersList"></div>
+            </div>
+        </div>
+        
+        <!-- Comments Tab -->
+        <div id="comments" class="tab-content">
+            <div class="section">
+                <h2>Commentaires du formulaire de contact</h2>
+                <div id="commentsList"></div>
+            </div>
+        </div>
+    </div>
 
-<h2>Produits existants</h2>
-<div id="productsList"></div>
-
-<h2>Debug Info</h2>
-<pre id="debug"></pre>
+    <div class="section">
+        <h2>Debug Info</h2>
+        <pre id="debug"></pre>
+    </div>
+</div>
 
 <script>
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzuKjobQzfLsu85C1yOzsoBEvw3fO3-5pObOvjXiJRUZLPCEFoU77USAjD4mOzYfv28/exec"; // Replace with your Web App URL
 
-async function saveProductToSheet(productData) {
-    try {
-        addDebugInfo('Début de l\'ajout du produit...');
-
-        // Convert image file to base64
-        if (productData.imageFile) {
-            const base64 = await toBase64(productData.imageFile);
-            productData.image = `data:${productData.imageFile.type};base64,${base64}`;
-            productData.imageType = productData.imageFile.type;
-        }
-
-        const requestBody = {
-            action: 'addProduct',
-            data: productData
-        };
-
-        addDebugInfo('Envoi du produit vers Google Sheets...');
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestBody)
-        });
-
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-
-        addDebugInfo('Produit ajouté: ' + JSON.stringify(result));
-        return result.success;
-
-    } catch (error) {
-        addDebugInfo('Erreur lors de l\'envoi: ' + error.message);
-        console.error('Error saving product:', error);
-        return false;
+// Tab navigation
+function openTab(tabName) {
+    // Hide all tab content
+    const tabContents = document.getElementsByClassName('tab-content');
+    for (let i = 0; i < tabContents.length; i++) {
+        tabContents[i].classList.remove('active');
+    }
+    
+    // Remove active class from all tab buttons
+    const tabButtons = document.getElementsByClassName('tab-button');
+    for (let i = 0; i < tabButtons.length; i++) {
+        tabButtons[i].classList.remove('active');
+    }
+    
+    // Show the specific tab content
+    document.getElementById(tabName).classList.add('active');
+    
+    // Add active class to the button that opened the tab
+    event.currentTarget.classList.add('active');
+    
+    // Load data for the selected tab
+    if (tabName === 'orders') {
+        loadOrders();
+    } else if (tabName === 'comments') {
+        loadComments();
     }
 }
 
@@ -95,13 +234,42 @@ async function loadProducts(){
             addDebugInfo(`${result.data.length} produits chargés`);
             const list = document.getElementById('productsList');
             list.innerHTML = '';
+            
+            if (result.data.length === 0) {
+                list.innerHTML = '<p>Aucun produit trouvé.</p>';
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            // Create table header
+            const header = table.insertRow();
+            header.innerHTML = `
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Prix</th>
+                <th>Catégorie</th>
+                <th>Collection</th>
+                <th>Actions</th>
+            `;
+            
+            // Add products to table
             result.data.forEach(p => {
-                const div = document.createElement('div');
-                div.innerHTML = `<strong>${p.name}</strong> - ${p.price} MAD
-                <br><img src="${p.image}" width="100">
-                <br><button onclick="deleteProduct('${p.id}')">Supprimer</button><hr>`;
-                list.appendChild(div);
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td><img src="${p.image}" class="product-image" alt="${p.name}"></td>
+                    <td>${p.name}</td>
+                    <td>${p.price} MAD</td>
+                    <td>${p.category}</td>
+                    <td>${p.collection}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteProduct('${p.id}')">Supprimer</button>
+                    </td>
+                `;
             });
+            
+            list.appendChild(table);
         }
     } catch(err){
         addDebugInfo('Erreur chargement produits: ' + err.message);
@@ -154,6 +322,15 @@ async function addProduct(){
             const result = await response.json();
             if(result.success){
                 addDebugInfo('Produit ajouté avec succès');
+                // Clear form
+                document.getElementById('productId').value = '';
+                document.getElementById('productName').value = '';
+                document.getElementById('productPrice').value = '';
+                document.getElementById('productCategory').value = '';
+                document.getElementById('productCollection').value = '';
+                document.getElementById('productDescription').value = '';
+                document.getElementById('productImage').value = '';
+                
                 loadProducts();
             } else {
                 addDebugInfo('Erreur ajout produit: ' + result.message);
@@ -168,6 +345,10 @@ async function addProduct(){
 
 // --- DELETE PRODUCT ---
 async function deleteProduct(productId){
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) {
+        return;
+    }
+    
     try {
         const payload = {action: 'deleteProduct', productId};
         const response = await fetch(GOOGLE_SCRIPT_URL, {
@@ -187,22 +368,222 @@ async function deleteProduct(productId){
     }
 }
 
+// --- LOAD ORDERS ---
+async function loadOrders(){
+    try {
+        addDebugInfo('Chargement des commandes...');
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders`);
+        const result = await response.json();
+        if(result.success && result.data){
+            addDebugInfo(`${result.data.length} commandes chargées`);
+            const list = document.getElementById('ordersList');
+            list.innerHTML = '';
+            
+            if (result.data.length === 0) {
+                list.innerHTML = '<p>Aucune commande trouvée.</p>';
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            // Create table header
+            const header = table.insertRow();
+            header.innerHTML = `
+                <th>ID Commande</th>
+                <th>Client</th>
+                <th>Email</th>
+                <th>Produits</th>
+                <th>Total</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Actions</th>
+            `;
+            
+            // Add orders to table
+            result.data.forEach(order => {
+                const row = table.insertRow();
+                
+                // Format products list
+                let productsHtml = '';
+                if (order.products && Array.isArray(order.products)) {
+                    productsHtml = '<ul>';
+                    order.products.forEach(product => {
+                        productsHtml += `<li>${product.name} (x${product.quantity}) - ${product.price} MAD</li>`;
+                    });
+                    productsHtml += '</ul>';
+                } else {
+                    productsHtml = 'N/A';
+                }
+                
+                row.innerHTML = `
+                    <td>${order.id || 'N/A'}</td>
+                    <td>${order.customerName || 'N/A'}</td>
+                    <td>${order.email || 'N/A'}</td>
+                    <td>${productsHtml}</td>
+                    <td>${order.total || 'N/A'} MAD</td>
+                    <td>
+                        <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
+                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>En attente</option>
+                            <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>En traitement</option>
+                            <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Expédiée</option>
+                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Livrée</option>
+                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Annulée</option>
+                        </select>
+                    </td>
+                    <td>${order.date || 'N/A'}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteOrder('${order.id}')">Supprimer</button>
+                    </td>
+                `;
+            });
+            
+            list.appendChild(table);
+        }
+    } catch(err){
+        addDebugInfo('Erreur chargement commandes: ' + err.message);
+    }
+}
+
+// --- UPDATE ORDER STATUS ---
+async function updateOrderStatus(orderId, newStatus) {
+    try {
+        addDebugInfo(`Mise à jour du statut de la commande ${orderId} vers: ${newStatus}`);
+        
+        const payload = {
+            action: 'updateOrderStatus',
+            orderId: orderId,
+            status: newStatus
+        };
+        
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        
+        const result = await response.json();
+        if(result.success){
+            addDebugInfo('Statut de commande mis à jour avec succès');
+        } else {
+            addDebugInfo('Erreur mise à jour statut commande: ' + result.message);
+        }
+    } catch(err){
+        addDebugInfo('Erreur mise à jour statut commande: ' + err.message);
+    }
+}
+
+// --- DELETE ORDER ---
+async function deleteOrder(orderId){
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette commande?')) {
+        return;
+    }
+    
+    try {
+        const payload = {action: 'deleteOrder', orderId};
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if(result.success){
+            addDebugInfo('Commande supprimée');
+            loadOrders();
+        } else {
+            addDebugInfo('Erreur suppression commande');
+        }
+    } catch(err){
+        addDebugInfo('Erreur suppression commande: ' + err.message);
+    }
+}
+
+// --- LOAD COMMENTS ---
+async function loadComments(){
+    try {
+        addDebugInfo('Chargement des commentaires...');
+        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getComments`);
+        const result = await response.json();
+        if(result.success && result.data){
+            addDebugInfo(`${result.data.length} commentaires chargés`);
+            const list = document.getElementById('commentsList');
+            list.innerHTML = '';
+            
+            if (result.data.length === 0) {
+                list.innerHTML = '<p>Aucun commentaire trouvé.</p>';
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            // Create table header
+            const header = table.insertRow();
+            header.innerHTML = `
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Date</th>
+                <th>Actions</th>
+            `;
+            
+            // Add comments to table
+            result.data.forEach(comment => {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td>${comment.name || 'N/A'}</td>
+                    <td>${comment.email || 'N/A'}</td>
+                    <td>${comment.message || 'N/A'}</td>
+                    <td>${comment.date || 'N/A'}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteComment('${comment.id}')">Supprimer</button>
+                    </td>
+                `;
+            });
+            
+            list.appendChild(table);
+        }
+    } catch(err){
+        addDebugInfo('Erreur chargement commentaires: ' + err.message);
+    }
+}
+
+// --- DELETE COMMENT ---
+async function deleteComment(commentId){
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire?')) {
+        return;
+    }
+    
+    try {
+        const payload = {action: 'deleteComment', commentId};
+        const response = await fetch(GOOGLE_SCRIPT_URL, {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+        if(result.success){
+            addDebugInfo('Commentaire supprimé');
+            loadComments();
+        } else {
+            addDebugInfo('Erreur suppression commentaire');
+        }
+    } catch(err){
+        addDebugInfo('Erreur suppression commentaire: ' + err.message);
+    }
+}
+
+// --- DEBUG INFO ---
+function addDebugInfo(message) {
+    const debugElement = document.getElementById('debug');
+    const timestamp = new Date().toLocaleTimeString();
+    debugElement.innerHTML += `[${timestamp}] ${message}\n`;
+    debugElement.scrollTop = debugElement.scrollHeight;
+}
+
 // --- INITIAL LOAD ---
 loadProducts();
-    const productData = {
-    id: generateId(), // your function to create unique ID
-    name: document.getElementById('productName').value,
-    price: document.getElementById('productPrice').value,
-    category: document.getElementById('productCategory').value,
-    collection: document.getElementById('productCollection').value,
-    description: document.getElementById('productDescription').value,
-    imageFile: document.getElementById('productImage').files[0]
-};
-saveProductToSheet(productData);
-
 </script>
 
 </body>
 </html>
-
-
