@@ -1,691 +1,1203 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel</title>
-<style>
-    body { 
-        font-family: Arial, sans-serif; 
-        margin: 20px; 
-        background-color: #f5f5f5;
-    }
-    .container {
-        max-width: 1200px;
-        margin: 0 auto;
-        background-color: white;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-    h1 {
-        color: #333;
-        border-bottom: 2px solid #eee;
-        padding-bottom: 10px;
-    }
-    h2 {
-        color: #444;
-        margin-top: 30px;
-    }
-    .section {
-        background-color: #f9f9f9;
-        padding: 15px;
-        margin-bottom: 20px;
-        border-radius: 5px;
-        border-left: 4px solid #4CAF50;
-    }
-    input, button, textarea, select { 
-        margin: 5px 0; 
-        padding: 8px; 
-        width: 100%; 
-        box-sizing: border-box;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-    }
-    button {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-    button:hover {
-        background-color: #45a049;
-    }
-    .delete-btn {
-        background-color: #f44336;
-    }
-    .delete-btn:hover {
-        background-color: #d32f2f;
-    }
-    #debug { 
-        border: 1px solid #ccc; 
-        padding: 10px; 
-        max-height: 200px; 
-        overflow-y: scroll; 
-        background-color: #f9f9f9;
-        font-family: monospace;
-        font-size: 12px;
-    }
-    .data-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px;
-    }
-    .data-table th, .data-table td {
-        border: 1px solid #ddd;
-        padding: 8px;
-        text-align: left;
-    }
-    .data-table th {
-        background-color: #f2f2f2;
-    }
-    .data-table tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
-    .data-table tr:hover {
-        background-color: #f1f1f1;
-    }
-    .tab-container {
-        margin-top: 20px;
-    }
-    .tab-buttons {
-        display: flex;
-        border-bottom: 1px solid #ddd;
-    }
-    .tab-button {
-        padding: 10px 20px;
-        background-color: #f1f1f1;
-        border: none;
-        border-bottom: 2px solid transparent;
-        cursor: pointer;
-        transition: all 0.3s;
-    }
-    .tab-button.active {
-        background-color: white;
-        border-bottom: 2px solid #4CAF50;
-        font-weight: bold;
-    }
-    .tab-content {
-        display: none;
-        padding: 20px 0;
-    }
-    .tab-content.active {
-        display: block;
-    }
-    .product-image {
-        max-width: 100px;
-        max-height: 100px;
-        object-fit: cover;
-    }
-    .status-select {
-        width: auto;
-        padding: 5px;
-    }
-    .form-group {
-        margin-bottom: 15px;
-    }
-    .form-group label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: bold;
-    }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - PijamaChic</title>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <!-- Cloudinary Upload Widget -->
+    <script src="https://upload-widget.cloudinary.com/global/all.js"></script>
+    <style>
+        :root {
+            --primary-color: #4CAF50;
+            --primary-dark: #45a049;
+            --danger-color: #f44336;
+            --danger-dark: #d32f2f;
+            --warning-color: #ff9800;
+            --info-color: #2196F3;
+            --light-gray: #f5f5f5;
+            --medium-gray: #e0e0e0;
+            --dark-gray: #333;
+        }
+        
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; 
+            background-color: var(--light-gray);
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        
+        header {
+            background-color: white;
+            padding: 15px 20px;
+            border-bottom: 1px solid var(--medium-gray);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .auth-section {
+            padding: 40px 20px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .auth-form {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: var(--dark-gray);
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        h2 {
+            color: #444;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--medium-gray);
+        }
+        
+        .section {
+            background-color: #f9f9f9;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border-left: 4px solid var(--primary-color);
+        }
+        
+        input, button, textarea, select { 
+            margin: 5px 0; 
+            padding: 10px; 
+            width: 100%; 
+            box-sizing: border-box;
+            border: 1px solid var(--medium-gray);
+            border-radius: 4px;
+            font-family: inherit;
+        }
+        
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: 600;
+        }
+        
+        button:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .delete-btn {
+            background-color: var(--danger-color);
+        }
+        
+        .delete-btn:hover {
+            background-color: var(--danger-dark);
+        }
+        
+        .secondary-btn {
+            background-color: var(--medium-gray);
+            color: var(--dark-gray);
+        }
+        
+        .secondary-btn:hover {
+            background-color: #d0d0d0;
+        }
+        
+        .upload-btn {
+            background-color: var(--info-color);
+        }
+        
+        .upload-btn:hover {
+            background-color: #1976D2;
+        }
+        
+        #debug { 
+            border: 1px solid #ccc; 
+            padding: 10px; 
+            max-height: 200px; 
+            overflow-y: scroll; 
+            background-color: #f9f9f9;
+            font-family: monospace;
+            font-size: 12px;
+            border-radius: 4px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            background-color: white;
+            border-radius: 4px;
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .data-table th, .data-table td {
+            border: 1px solid var(--medium-gray);
+            padding: 12px;
+            text-align: left;
+        }
+        
+        .data-table th {
+            background-color: #f2f2f2;
+            font-weight: 600;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        
+        .data-table tr:hover {
+            background-color: #f1f1f1;
+        }
+        
+        .tab-container {
+            margin-top: 20px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            border-bottom: 1px solid var(--medium-gray);
+            background-color: white;
+        }
+        
+        .tab-button {
+            padding: 12px 24px;
+            background-color: white;
+            border: none;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+        
+        .tab-button.active {
+            background-color: white;
+            border-bottom: 2px solid var(--primary-color);
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .tab-content {
+            display: none;
+            padding: 20px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .product-image {
+            max-width: 100px;
+            max-height: 100px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
+        
+        .status-select {
+            width: auto;
+            padding: 6px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+        
+        .image-preview {
+            max-width: 200px;
+            max-height: 200px;
+            margin-top: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .uploaded-image {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-top: 10px;
+        }
+        
+        .upload-status {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .upload-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .upload-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 28px;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .alert {
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .spinner {
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-left-color: var(--primary-color);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        .login-message {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+    </style>
 </head>
 <body>
-
-<div class="container">
-    <h1>Admin Panel - PijamaChic</h1>
-    
-    <div class="tab-container">
-        <div class="tab-buttons">
-            <button class="tab-button active" onclick="openTab('products')">Produits</button>
-            <button class="tab-button" onclick="openTab('orders')">Commandes</button>
-            <button class="tab-button" onclick="openTab('comments')">Commentaires</button>
-        </div>
-        
-        <!-- Products Tab -->
-        <div id="products" class="tab-content active">
-            <div class="section">
-                <h2>Ajouter un produit</h2>
+    <div class="container">
+        <!-- Login Section -->
+        <div id="authSection" class="auth-section">
+            <div class="auth-form">
+                <h1>Connexion Admin</h1>
+                <div id="authMessage" class="alert hidden"></div>
                 <div class="form-group">
-                    <label for="productId">ID du produit:</label>
-                    <input type="text" id="productId" placeholder="PJ-001">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" placeholder="admin@pijamachic.com">
                 </div>
                 <div class="form-group">
-                    <label for="productName">Nom du produit:</label>
-                    <input type="text" id="productName" placeholder="Pyjama en soie">
+                    <label for="password">Mot de passe:</label>
+                    <input type="password" id="password" placeholder="Votre mot de passe">
                 </div>
-                <div class="form-group">
-                    <label for="productPrice">Prix (MAD):</label>
-                    <input type="number" id="productPrice" placeholder="299">
+                <button onclick="login()">Se connecter</button>
+                <div class="login-message">
+                    <p>Première connexion? Utilisez le bouton ci-dessous pour créer un compte.</p>
+                    <button class="secondary-btn" onclick="showRegister()">Créer un compte admin</button>
                 </div>
-                <div class="form-group">
-                    <label for="productCategory">Catégorie:</label>
-                    <input type="text" id="productCategory" placeholder="Pyjama Femme">
-                </div>
-                <div class="form-group">
-                    <label for="productCollection">Collection:</label>
-                    <input type="text" id="productCollection" placeholder="Été 2024">
-                </div>
-                <div class="form-group">
-                    <label for="productDescription">Description:</label>
-                    <textarea id="productDescription" placeholder="Description du produit..." rows="4"></textarea>
-                </div>
-                <div class="form-group">
-                    <label for="productImage">Image du produit:</label>
-                    <input type="file" id="productImage" accept="image/*">
-                </div>
-                <button onclick="addProduct()">Ajouter Produit</button>
             </div>
-
-            <div class="section">
-                <h2>Produits existants</h2>
-                <div id="productsList"></div>
-            </div>
-        </div>
-        
-        <!-- Orders Tab -->
-        <div id="orders" class="tab-content">
-            <div class="section">
-                <h2>Commandes</h2>
-                <div id="ordersList"></div>
-            </div>
-        </div>
-        
-        <!-- Comments Tab -->
-        <div id="comments" class="tab-content">
-            <div class="section">
-                <h2>Commentaires du formulaire de contact</h2>
-                <div id="commentsList"></div>
-            </div>
-        </div>
-    </div>
-
-    <div class="section">
-        <h2>Debug Info</h2>
-        <pre id="debug"></pre>
-    </div>
-</div>
-
-<script>
-// ========== CONFIGURATION ==========
-const SHEET_ID = '1O8E8_Ju_IjeMc9qIHxmCi0Nm3_3vtD4rkKP5DkiDj90'; // REPLACE WITH YOUR GOOGLE SHEET ID
-const API_KEY = 'AIzaSyCDpp1kxzhLS4ByMpm526_ojfFsa-hvcnc'; // REPLACE WITH YOUR GOOGLE API KEY
-
-// Sheet configuration
-const SHEETS = {
-    PRODUCTS: 'PijamaChic Products',
-    ORDERS: 'orders', 
-    COMMENTS: 'comments'
-};
-
-// Base URL for Google Sheets API
-const SHEETS_API_BASE = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}`;
-
-// ========== UTILITY FUNCTIONS ==========
-function addDebugInfo(message) {
-    const debugElement = document.getElementById('debug');
-    const timestamp = new Date().toLocaleTimeString();
-    debugElement.innerHTML += `[${timestamp}] ${message}\n`;
-    debugElement.scrollTop = debugElement.scrollHeight;
-}
-
-function generateId() {
-    return 'ID-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
-}
-
-// ========== TAB MANAGEMENT ==========
-function openTab(tabName) {
-    // Hide all tab content
-    const tabContents = document.getElementsByClassName('tab-content');
-    for (let i = 0; i < tabContents.length; i++) {
-        tabContents[i].classList.remove('active');
-    }
-    
-    // Remove active class from all tab buttons
-    const tabButtons = document.getElementsByClassName('tab-button');
-    for (let i = 0; i < tabButtons.length; i++) {
-        tabButtons[i].classList.remove('active');
-    }
-    
-    // Show the specific tab content
-    document.getElementById(tabName).classList.add('active');
-    
-    // Add active class to the button that opened the tab
-    event.currentTarget.classList.add('active');
-    
-    // Load data for the selected tab
-    if (tabName === 'orders') {
-        loadOrders();
-    } else if (tabName === 'comments') {
-        loadComments();
-    } else if (tabName === 'products') {
-        loadProducts();
-    }
-}
-
-// ========== PRODUCTS MANAGEMENT ==========
-async function loadProducts() {
-    try {
-        addDebugInfo('Chargement des produits...');
-        const response = await fetch(`${SHEETS_API_BASE}/values/${SHEETS.PRODUCTS}?key=${API_KEY}`);
-        
-        if (!response.ok) {
-            throw new Error(`Erreur HTTP: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        if (data.values && data.values.length > 1) {
-            const products = data.values.slice(1).map(row => ({
-                date_added: row[0],
-                id: row[1],
-                name: row[2],
-                price: row[3],
-                category: row[4],
-                collection: row[5],
-                description: row[6],
-                image: row[7] || 'https://via.placeholder.com/100?text=No+Image'
-            }));
             
-            addDebugInfo(`${products.length} produits chargés`);
-            displayProducts(products);
-        } else {
-            addDebugInfo('Aucun produit trouvé');
-            document.getElementById('productsList').innerHTML = '<p>Aucun produit trouvé. Ajoutez votre premier produit!</p>';
-        }
-    } catch(err) {
-        addDebugInfo('Erreur chargement produits: ' + err.message);
-        document.getElementById('productsList').innerHTML = '<p style="color: red;">Erreur de chargement: ' + err.message + '</p>';
-    }
-}
-
-function displayProducts(products) {
-    const list = document.getElementById('productsList');
-    list.innerHTML = '';
-    
-    if (products.length === 0) {
-        list.innerHTML = '<p>Aucun produit trouvé.</p>';
-        return;
-    }
-    
-    const table = document.createElement('table');
-    table.className = 'data-table';
-    
-    // Create table header
-    const header = table.insertRow();
-    header.innerHTML = `
-        <th>Image</th>
-        <th>ID</th>
-        <th>Nom</th>
-        <th>Prix</th>
-        <th>Catégorie</th>
-        <th>Collection</th>
-        <th>Description</th>
-        <th>Actions</th>
-    `;
-    
-    // Add products to table
-    products.forEach(p => {
-        const row = table.insertRow();
-        row.innerHTML = `
-            <td><img src="${p.image}" class="product-image" alt="${p.name}" onerror="this.src='https://via.placeholder.com/100?text=Image+Error'"></td>
-            <td>${p.id}</td>
-            <td>${p.name}</td>
-            <td>${p.price} MAD</td>
-            <td>${p.category}</td>
-            <td>${p.collection}</td>
-            <td>${p.description.substring(0, 50)}${p.description.length > 50 ? '...' : ''}</td>
-            <td>
-                <button class="delete-btn" onclick="deleteProduct('${p.id}')">Supprimer</button>
-            </td>
-        `;
-    });
-    
-    list.appendChild(table);
-}
-
-async function addProduct() {
-    try {
-        // Get form values
-        const id = document.getElementById('productId').value || generateId();
-        const name = document.getElementById('productName').value;
-        const price = document.getElementById('productPrice').value;
-        const category = document.getElementById('productCategory').value;
-        const collection = document.getElementById('productCollection').value;
-        const description = document.getElementById('productDescription').value;
-        const fileInput = document.getElementById('productImage');
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-form hidden">
+                <h1>Créer un compte Admin</h1>
+                <div class="form-group">
+                    <label for="regEmail">Email:</label>
+                    <input type="email" id="regEmail" placeholder="admin@pijamachic.com">
+                </div>
+                <div class="form-group">
+                    <label for="regPassword">Mot de passe:</label>
+                    <input type="password" id="regPassword" placeholder="Mot de passe sécurisé">
+                </div>
+                <div class="form-group">
+                    <label for="regConfirmPassword">Confirmer le mot de passe:</label>
+                    <input type="password" id="regConfirmPassword" placeholder="Confirmer le mot de passe">
+                </div>
+                <button onclick="register()">Créer le compte</button>
+                <div class="login-message">
+                    <button class="secondary-btn" onclick="showLogin()">Retour à la connexion</button>
+                </div>
+            </div>
+        </div>
         
-        // Validation
-        if (!name || !price || !category) {
-            alert('Veuillez remplir au moins le nom, le prix et la catégorie');
-            return;
-        }
+        <!-- Admin Panel -->
+        <div id="adminPanel" class="hidden">
+            <header>
+                <div class="logo">PijamaChic Admin</div>
+                <div class="user-info">
+                    <span id="userEmail"></span>
+                    <button class="secondary-btn" onclick="openTab('profile')">Profil</button>
+                    <button class="delete-btn" onclick="logout()">Déconnexion</button>
+                </div>
+            </header>
+            
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="openTab('dashboard')">Tableau de bord</button>
+                    <button class="tab-button" onclick="openTab('products')">Produits</button>
+                    <button class="tab-button" onclick="openTab('orders')">Commandes</button>
+                    <button class="tab-button" onclick="openTab('comments')">Commentaires</button>
+                    <button class="tab-button" onclick="openTab('profile')">Profil</button>
+                </div>
+                
+                <!-- Dashboard Tab -->
+                <div id="dashboard" class="tab-content active">
+                    <h1>Tableau de bord</h1>
+                    
+                    <div class="stats-container">
+                        <div class="stat-card">
+                            <div class="stat-label">Produits</div>
+                            <div class="stat-value" id="productsCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Commandes</div>
+                            <div class="stat-value" id="ordersCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Commentaires</div>
+                            <div class="stat-value" id="commentsCount">0</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Revenus (MAD)</div>
+                            <div class="stat-value" id="revenueCount">0</div>
+                        </div>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>Dernières commandes</h2>
+                        <div id="recentOrders"></div>
+                    </div>
+                    
+                    <div class="section">
+                        <h2>Derniers commentaires</h2>
+                        <div id="recentComments"></div>
+                    </div>
+                </div>
+                
+                <!-- Products Tab -->
+                <div id="products" class="tab-content">
+                    <h1>Gestion des produits</h1>
+                    
+                    <div class="section">
+                        <h2>Ajouter un produit</h2>
+                        <div class="form-group">
+                            <label for="productName">Nom du produit:</label>
+                            <input type="text" id="productName" placeholder="Pyjama en soie">
+                        </div>
+                        <div class="form-group">
+                            <label for="productPrice">Prix (MAD):</label>
+                            <input type="number" id="productPrice" placeholder="299">
+                        </div>
+                        <div class="form-group">
+                            <label for="productCategory">Catégorie:</label>
+                            <input type="text" id="productCategory" placeholder="Pyjama Femme">
+                        </div>
+                        <div class="form-group">
+                            <label for="productCollection">Collection:</label>
+                            <input type="text" id="productCollection" placeholder="Été 2024">
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription">Description:</label>
+                            <textarea id="productDescription" placeholder="Description du produit..." rows="4"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Image du produit:</label>
+                            <button type="button" class="upload-btn" onclick="uploadProductImage()">
+                                📷 Uploader une image
+                            </button>
+                            <div id="uploadStatus" class="upload-status"></div>
+                            <img id="uploadedImage" class="uploaded-image" alt="Image uploadée">
+                            <input type="hidden" id="productImageUrl">
+                        </div>
+                        <button onclick="addProduct()">Ajouter Produit</button>
+                    </div>
 
-        let imageUrl = 'https://via.placeholder.com/500x500?text=No+Image';
+                    <div class="section">
+                        <h2>Produits existants</h2>
+                        <div id="productsList"></div>
+                    </div>
+                </div>
+                
+                <!-- Orders Tab -->
+                <div id="orders" class="tab-content">
+                    <h1>Gestion des commandes</h1>
+                    <div class="section">
+                        <h2>Commandes</h2>
+                        <div id="ordersList"></div>
+                    </div>
+                </div>
+                
+                <!-- Comments Tab -->
+                <div id="comments" class="tab-content">
+                    <h1>Gestion des commentaires</h1>
+                    <div class="section">
+                        <h2>Commentaires du formulaire de contact</h2>
+                        <div id="commentsList"></div>
+                    </div>
+                </div>
+                
+                <!-- Profile Tab -->
+                <div id="profile" class="tab-content">
+                    <h1>Gestion du profil</h1>
+                    <div class="section">
+                        <h2>Changer le mot de passe</h2>
+                        <div class="form-group">
+                            <label for="currentPassword">Mot de passe actuel:</label>
+                            <input type="password" id="currentPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">Nouveau mot de passe:</label>
+                            <input type="password" id="newPassword">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmNewPassword">Confirmer le nouveau mot de passe:</label>
+                            <input type="password" id="confirmNewPassword">
+                        </div>
+                        <button onclick="changePassword()">Changer le mot de passe</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>Journal d'activité</h2>
+                <pre id="debug"></pre>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== CONFIGURATION ==========
+        // Firebase Configuration - USING YOUR CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyBhlfzTk-z-f5IrGcmP125NyDkiWoKwCQQ",
+            authDomain: "pijamachic-admin.firebaseapp.com",
+            projectId: "pijamachic-admin",
+            storageBucket: "pijamachic-admin.firebasestorage.app",
+            messagingSenderId: "73003259010",
+            appId: "1:73003259010:web:80c1c1e702c9283f7c109b",
+            measurementId: "G-65RPD5WV0F"
+        };
+
+        // Cloudinary Configuration - UPDATE WITH YOUR CLOUDINARY CLOUD NAME
+        const cloudinaryConfig = {
+            cloudName: 'dtjulkl2n', // Replace with your Cloudinary cloud name
+            uploadPreset: 'pijamachic_products'      // Use the preset name we discussed
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
         
-        // Handle image upload
-        if (fileInput.files.length > 0) {
-            const file = fileInput.files[0];
-            if (file.size > 5 * 1024 * 1024) {
-                alert('Image trop volumineuse (max 5MB)');
-                return;
-            }
-            // For now, we'll use placeholder. In production, you'd upload to a service
-            imageUrl = `https://via.placeholder.com/500x500/4CAF50/white?text=${encodeURIComponent(name)}`;
-            addDebugInfo('Image utilisée: placeholder (upload désactivé pour CORS)');
-        }
+        // Firebase services
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-        // Prepare product data
-        const productData = [
-            new Date().toISOString(),
-            id,
-            name,
-            price,
-            category,
-            collection,
-            description,
-            imageUrl
-        ];
+        // ========== CLOUDINARY IMAGE UPLOAD ==========
+        let currentImageUrl = '';
 
-        addDebugInfo('Ajout du produit...');
-        
-        // Append to Google Sheet
-        const response = await fetch(`${SHEETS_API_BASE}/values/${SHEETS.PRODUCTS}!A:A:append?valueInputOption=RAW&key=${API_KEY}`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                values: [productData]
-            })
-        });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.error?.message || 'Erreur inconnue');
-        }
-
-        addDebugInfo('Produit ajouté avec succès!');
-        
-        // Clear form
-        document.getElementById('productId').value = '';
-        document.getElementById('productName').value = '';
-        document.getElementById('productPrice').value = '';
-        document.getElementById('productCategory').value = '';
-        document.getElementById('productCollection').value = '';
-        document.getElementById('productDescription').value = '';
-        document.getElementById('productImage').value = '';
-        
-        // Reload products
-        loadProducts();
-        
-    } catch(err) {
-        addDebugInfo('Erreur ajout produit: ' + err.message);
-        alert('Erreur: ' + err.message);
-    }
-}
-
-async function deleteProduct(productId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) return;
-    
-    addDebugInfo('Suppression du produit: ' + productId);
-    alert('La suppression directe via API nécessite une configuration supplémentaire. Pour le moment, supprimez manuellement depuis Google Sheets.');
-}
-
-// ========== ORDERS MANAGEMENT ==========
-async function loadOrders() {
-    try {
-        addDebugInfo('Chargement des commandes...');
-        const response = await fetch(`${SHEETS_API_BASE}/values/${SHEETS.ORDERS}?key=${API_KEY}`);
-        const data = await response.json();
-        
-        if (data.values && data.values.length > 1) {
-            const orders = data.values.slice(1).map(row => {
-                try {
-                    const products = typeof row[5] === 'string' && row[5] ? JSON.parse(row[5]) : [];
-                    return {
-                        date: row[0],
-                        id: row[1],
-                        customerName: row[2],
-                        email: row[3],
-                        customerPhone: row[4],
-                        products: products,
-                        total: row[6],
-                        address: row[7],
-                        status: row[8] || 'pending'
-                    };
-                } catch (e) {
-                    return {
-                        date: row[0],
-                        id: row[1],
-                        customerName: row[2],
-                        email: row[3],
-                        customerPhone: row[4],
-                        products: [],
-                        total: row[6],
-                        address: row[7],
-                        status: row[8] || 'pending'
-                    };
+        function uploadProductImage() {
+            const uploadWidget = cloudinary.createUploadWidget({
+                cloudName: cloudinaryConfig.cloudName,
+                uploadPreset: cloudinaryConfig.uploadPreset,
+                sources: ['local', 'url', 'camera'],
+                multiple: false,
+                maxFiles: 1,
+                clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+                maxFileSize: 5000000, // 5MB
+                styles: {
+                    palette: {
+                        window: "#FFFFFF",
+                        sourceBg: "#F4F4F5",
+                        windowBorder: "#90a0b3",
+                        tabIcon: "#4CAF50",
+                        inactiveTabIcon: "#69778A",
+                        menuIcons: "#4CAF50",
+                        link: "#4CAF50",
+                        action: "#4CAF50",
+                        inProgress: "#4CAF50",
+                        complete: "#4CAF50",
+                        error: "#f44336",
+                        textDark: "#000000",
+                        textLight: "#FFFFFF"
+                    }
+                }
+            }, (error, result) => {
+                if (!error && result && result.event === "success") {
+                    // Image uploaded successfully
+                    currentImageUrl = result.info.secure_url;
+                    
+                    // Show success message
+                    const uploadStatus = document.getElementById('uploadStatus');
+                    uploadStatus.textContent = '✅ Image uploadée avec succès!';
+                    uploadStatus.className = 'upload-status upload-success';
+                    uploadStatus.style.display = 'block';
+                    
+                    // Show preview
+                    const uploadedImage = document.getElementById('uploadedImage');
+                    uploadedImage.src = currentImageUrl;
+                    uploadedImage.style.display = 'block';
+                    
+                    // Store URL in hidden field
+                    document.getElementById('productImageUrl').value = currentImageUrl;
+                    
+                    addDebugInfo('Image Cloudinary: ' + currentImageUrl);
+                }
+                
+                if (error) {
+                    const uploadStatus = document.getElementById('uploadStatus');
+                    uploadStatus.textContent = '❌ Erreur upload: ' + error.message;
+                    uploadStatus.className = 'upload-status upload-error';
+                    uploadStatus.style.display = 'block';
+                    addDebugInfo('Erreur Cloudinary: ' + error);
                 }
             });
+
+            uploadWidget.open();
+        }
+
+        // ========== PRODUCT MANAGEMENT ==========
+        async function addProduct() {
+            try {
+                // Get form values
+                const name = document.getElementById('productName').value;
+                const price = document.getElementById('productPrice').value;
+                const category = document.getElementById('productCategory').value;
+                const collection = document.getElementById('productCollection').value;
+                const description = document.getElementById('productDescription').value;
+                
+                // Validation
+                if (!name || !price || !category) {
+                    alert('Veuillez remplir au moins le nom, le prix et la catégorie');
+                    return;
+                }
+
+                if (!currentImageUrl) {
+                    alert('Veuillez uploader une image pour le produit');
+                    return;
+                }
+
+                // Prepare product data
+                const productData = {
+                    name: name,
+                    price: parseFloat(price),
+                    category: category,
+                    collection: collection,
+                    description: description,
+                    imageUrl: currentImageUrl,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                };
+
+                addDebugInfo('Ajout du produit...');
+                
+                // Add to Firestore
+                await db.collection('products').add(productData);
+
+                addDebugInfo('Produit ajouté avec succès!');
+                
+                // Clear form and reset image
+                clearProductForm();
+                
+                // Reload products
+                loadProducts();
+                
+            } catch(err) {
+                addDebugInfo('Erreur ajout produit: ' + err.message);
+                alert('Erreur: ' + err.message);
+            }
+        }
+
+        function clearProductForm() {
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productCategory').value = '';
+            document.getElementById('productCollection').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('uploadedImage').style.display = 'none';
+            document.getElementById('uploadStatus').style.display = 'none';
+            document.getElementById('productImageUrl').value = '';
+            currentImageUrl = '';
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function addDebugInfo(message) {
+            const debugElement = document.getElementById('debug');
+            const timestamp = new Date().toLocaleTimeString();
+            debugElement.innerHTML += `[${timestamp}] ${message}\n`;
+            debugElement.scrollTop = debugElement.scrollHeight;
+        }
+
+        function showAlert(message, type = 'success') {
+            const alertElement = document.getElementById('authMessage');
+            alertElement.textContent = message;
+            alertElement.className = `alert alert-${type}`;
+            alertElement.classList.remove('hidden');
             
-            addDebugInfo(`${orders.length} commandes chargées`);
-            displayOrders(orders);
-        } else {
-            document.getElementById('ordersList').innerHTML = `
-                <p>Aucune commande trouvée.</p>
-                <p><strong>Pour ajouter des commandes:</strong> 
-                Les commandes seront ajoutées automatiquement quand les clients passeront commande sur votre site.</p>
-            `;
+            setTimeout(() => {
+                alertElement.classList.add('hidden');
+            }, 5000);
         }
-    } catch(err) {
-        addDebugInfo('Erreur chargement commandes: ' + err.message);
-        document.getElementById('ordersList').innerHTML = '<p style="color: red;">Erreur de chargement: ' + err.message + '</p>';
-    }
-}
 
-function displayOrders(orders) {
-    const list = document.getElementById('ordersList');
-    list.innerHTML = '';
-    
-    if (orders.length === 0) {
-        list.innerHTML = '<p>Aucune commande trouvée.</p>';
-        return;
-    }
-    
-    const table = document.createElement('table');
-    table.className = 'data-table';
-    
-    const header = table.insertRow();
-    header.innerHTML = `
-        <th>ID Commande</th>
-        <th>Client</th>
-        <th>Email</th>
-        <th>Téléphone</th>
-        <th>Produits</th>
-        <th>Total</th>
-        <th>Adresse</th>
-        <th>Statut</th>
-        <th>Date</th>
-    `;
-    
-    orders.forEach(order => {
-        const row = table.insertRow();
-        let productsHtml = 'Aucun produit';
-        
-        if (order.products && order.products.length > 0) {
-            productsHtml = '<ul style="margin: 0; padding-left: 15px; max-width: 200px;">';
-            order.products.forEach(product => {
-                productsHtml += `<li>${product.name || 'Produit'} (x${product.quantity || 1})</li>`;
-            });
-            productsHtml += '</ul>';
+        // ========== AUTHENTICATION FUNCTIONS ==========
+        function showRegister() {
+            document.getElementById('authSection').querySelector('.auth-form').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
         }
-        
-        row.innerHTML = `
-            <td>${order.id || 'N/A'}</td>
-            <td>${order.customerName || 'N/A'}</td>
-            <td>${order.email || 'N/A'}</td>
-            <td>${order.customerPhone || 'N/A'}</td>
-            <td>${productsHtml}</td>
-            <td>${order.total || '0'} MAD</td>
-            <td>${order.address || 'N/A'}</td>
-            <td>
-                <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
-                    <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>En attente</option>
-                    <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmée</option>
-                    <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Expédiée</option>
-                    <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Livrée</option>
-                    <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Annulée</option>
-                </select>
-            </td>
-            <td>${order.date ? new Date(order.date).toLocaleDateString('fr-FR') : 'N/A'}</td>
-        `;
-    });
-    
-    list.appendChild(table);
-}
 
-async function updateOrderStatus(orderId, newStatus) {
-    addDebugInfo(`Mise à jour statut commande ${orderId} -> ${newStatus}`);
-    alert('La mise à jour du statut nécessite une configuration API avancée. Mettez à jour manuellement dans Google Sheets.');
-}
+        function showLogin() {
+            document.getElementById('authSection').querySelector('.auth-form').classList.remove('hidden');
+            document.getElementById('registerForm').classList.add('hidden');
+        }
 
-// ========== COMMENTS MANAGEMENT ==========
-async function loadComments() {
-    try {
-        addDebugInfo('Chargement des commentaires...');
-        const response = await fetch(`${SHEETS_API_BASE}/values/${SHEETS.COMMENTS}?key=${API_KEY}`);
-        const data = await response.json();
-        
-        if (data.values && data.values.length > 1) {
-            const comments = data.values.slice(1).map(row => ({
-                date: row[0],
-                id: row[1],
-                name: row[2],
-                email: row[3],
-                message: row[4],
-                rating: row[5] || '',
-                productId: row[6] || ''
-            }));
+        async function register() {
+            const email = document.getElementById('regEmail').value;
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
             
-            addDebugInfo(`${comments.length} commentaires chargés`);
-            displayComments(comments);
-        } else {
-            document.getElementById('commentsList').innerHTML = `
-                <p>Aucun commentaire trouvé.</p>
-                <p><strong>Pour ajouter des commentaires:</strong> 
-                Les commentaires seront ajoutés automatiquement quand les clients utiliseront votre formulaire de contact.</p>
+            if (password !== confirmPassword) {
+                showAlert('Les mots de passe ne correspondent pas', 'error');
+                return;
+            }
+            
+            if (password.length < 6) {
+                showAlert('Le mot de passe doit contenir au moins 6 caractères', 'error');
+                return;
+            }
+            
+            try {
+                const userCredential = await auth.createUserWithEmailAndPassword(email, password);
+                addDebugInfo('Compte admin créé avec succès: ' + email);
+                showAlert('Compte créé avec succès! Vous pouvez maintenant vous connecter.');
+                showLogin();
+            } catch (error) {
+                addDebugInfo('Erreur création compte: ' + error.message);
+                showAlert('Erreur: ' + error.message, 'error');
+            }
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                addDebugInfo('Connexion réussie: ' + email);
+            } catch (error) {
+                addDebugInfo('Erreur connexion: ' + error.message);
+                showAlert('Erreur: ' + error.message, 'error');
+            }
+        }
+
+        async function logout() {
+            try {
+                await auth.signOut();
+                addDebugInfo('Déconnexion réussie');
+            } catch (error) {
+                addDebugInfo('Erreur déconnexion: ' + error.message);
+            }
+        }
+
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmNewPassword = document.getElementById('confirmNewPassword').value;
+            
+            if (newPassword !== confirmNewPassword) {
+                showAlert('Les nouveaux mots de passe ne correspondent pas', 'error');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                showAlert('Le nouveau mot de passe doit contenir au moins 6 caractères', 'error');
+                return;
+            }
+            
+            const user = auth.currentUser;
+            const credential = firebase.auth.EmailAuthProvider.credential(user.email, currentPassword);
+            
+            try {
+                await user.reauthenticateWithCredential(credential);
+                await user.updatePassword(newPassword);
+                
+                addDebugInfo('Mot de passe changé avec succès');
+                showAlert('Mot de passe changé avec succès!');
+                
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmNewPassword').value = '';
+            } catch (error) {
+                addDebugInfo('Erreur changement mot de passe: ' + error.message);
+                showAlert('Erreur: ' + error.message, 'error');
+            }
+        }
+
+        // ========== TAB MANAGEMENT ==========
+        function openTab(tabName) {
+            const tabContents = document.getElementsByClassName('tab-content');
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove('active');
+            }
+            
+            const tabButtons = document.getElementsByClassName('tab-button');
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove('active');
+            }
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            if (tabName === 'dashboard') {
+                loadDashboard();
+            } else if (tabName === 'orders') {
+                loadOrders();
+            } else if (tabName === 'comments') {
+                loadComments();
+            } else if (tabName === 'products') {
+                loadProducts();
+            }
+        }
+
+        // ========== DATA LOADING FUNCTIONS ==========
+        async function loadProducts() {
+            try {
+                const snapshot = await db.collection('products').orderBy('createdAt', 'desc').get();
+                const products = [];
+                
+                snapshot.forEach(doc => {
+                    products.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                addDebugInfo(`${products.length} produits chargés`);
+                displayProducts(products);
+            } catch(err) {
+                addDebugInfo('Erreur chargement produits: ' + err.message);
+                document.getElementById('productsList').innerHTML = '<p style="color: red;">Erreur de chargement: ' + err.message + '</p>';
+            }
+        }
+
+        function displayProducts(products) {
+            const list = document.getElementById('productsList');
+            
+            if (products.length === 0) {
+                list.innerHTML = '<p>Aucun produit trouvé. Ajoutez votre premier produit!</p>';
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            const header = table.insertRow();
+            header.innerHTML = `
+                <th>Image</th>
+                <th>Nom</th>
+                <th>Prix</th>
+                <th>Catégorie</th>
+                <th>Collection</th>
+                <th>Description</th>
+                <th>Actions</th>
             `;
-        }
-    } catch(err) {
-        addDebugInfo('Erreur chargement commentaires: ' + err.message);
-        document.getElementById('commentsList').innerHTML = '<p style="color: red;">Erreur de chargement: ' + err.message + '</p>';
-    }
-}
-
-function displayComments(comments) {
-    const list = document.getElementById('commentsList');
-    list.innerHTML = '';
-    
-    if (comments.length === 0) {
-        list.innerHTML = '<p>Aucun commentaire trouvé.</p>';
-        return;
-    }
-    
-    const table = document.createElement('table');
-    table.className = 'data-table';
-    
-    const header = table.insertRow();
-    header.innerHTML = `
-        <th>Nom</th>
-        <th>Email</th>
-        <th>Message</th>
-        <th>Note</th>
-        <th>Date</th>
-        <th>Actions</th>
-    `;
-    
-    comments.forEach(comment => {
-        const row = table.insertRow();
-        const ratingStars = comment.rating ? '★'.repeat(comment.rating) + '☆'.repeat(5-comment.rating) : 'N/A';
-        
-        row.innerHTML = `
-            <td>${comment.name || 'N/A'}</td>
-            <td>${comment.email || 'N/A'}</td>
-            <td style="max-width: 300px;">${comment.message || 'N/A'}</td>
-            <td>${ratingStars}</td>
-            <td>${comment.date ? new Date(comment.date).toLocaleDateString('fr-FR') : 'N/A'}</td>
-            <td>
-                <button class="delete-btn" onclick="deleteComment('${comment.id}')">Supprimer</button>
-            </td>
-        `;
-    });
-    
-    list.appendChild(table);
-}
-
-async function deleteComment(commentId) {
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire?')) return;
-    addDebugInfo('Suppression commentaire: ' + commentId);
-    alert('La suppression directe via API nécessite une configuration supplémentaire. Pour le moment, supprimez manuellement depuis Google Sheets.');
-}
-
-// ========== INITIALIZATION ==========
-// Load products on page load
-loadProducts();
-
-// Add sample data button for testing
-document.addEventListener('DOMContentLoaded', function() {
-    const productsSection = document.querySelector('#products .section:first-child');
-    const testButton = document.createElement('button');
-    testButton.textContent = 'Remplir avec des exemples (Test)';
-    testButton.style.backgroundColor = '#2196F3';
-    testButton.style.marginTop = '10px';
-    testButton.onclick = fillSampleData;
-    productsSection.appendChild(testButton);
-});
-
-async function fillSampleData() {
-    const sampleProducts = [
-        [
-            new Date().toISOString(),
-            'PJ-001',
-            'Pyjama en Soie Luxe',
-            '459',
-            'Pyjama Femme',
-            'Collection Élégance',
-            'Pyjama en soie naturelle, confort exceptionnel pour vos nuits.',
-            'https://via.placeholder.com/500x500/4CAF50/white?text=Pyjama+Soie'
-        ],
-        [
-            new Date().toISOString(),
-            'PJ-002', 
-            'Pyjama Coton Bio',
-            '299',
-            'Pyjama Homme',
-            'Collection Confort',
-            'Pyjama 100% coton biologique, idéal pour un sommeil paisible.',
-            'https://via.placeholder.com/500x500/2196F3/white?text=Pyjama+Coton'
-        ]
-    ];
-
-    try {
-        for (const product of sampleProducts) {
-            await fetch(`${SHEETS_API_BASE}/values/${SHEETS.PRODUCTS}!A:A:append?valueInputOption=RAW&key=${API_KEY}`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({values: [product]})
+            
+            products.forEach(p => {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td><img src="${p.imageUrl || 'https://via.placeholder.com/100?text=No+Image'}" class="product-image" alt="${p.name}"></td>
+                    <td>${p.name}</td>
+                    <td>${p.price} MAD</td>
+                    <td>${p.category}</td>
+                    <td>${p.collection}</td>
+                    <td>${p.description ? (p.description.substring(0, 50) + (p.description.length > 50 ? '...' : '')) : 'N/A'}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteProduct('${p.id}')">Supprimer</button>
+                    </td>
+                `;
             });
+            
+            list.innerHTML = '';
+            list.appendChild(table);
         }
-        addDebugInfo('Données exemple ajoutées!');
-        loadProducts();
-    } catch(err) {
-        addDebugInfo('Erreur ajout exemples: ' + err.message);
-    }
-}
-</script>
 
+        async function deleteProduct(productId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) return;
+            
+            try {
+                await db.collection('products').doc(productId).delete();
+                addDebugInfo('Produit supprimé: ' + productId);
+                loadProducts();
+            } catch(err) {
+                addDebugInfo('Erreur suppression produit: ' + err.message);
+                alert('Erreur: ' + err.message);
+            }
+        }
+
+        // ========== ORDERS MANAGEMENT ==========
+        async function loadOrders() {
+            try {
+                const snapshot = await db.collection('orders').orderBy('createdAt', 'desc').get();
+                const orders = [];
+                
+                snapshot.forEach(doc => {
+                    orders.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                displayOrders(orders);
+            } catch(err) {
+                document.getElementById('ordersList').innerHTML = '<p style="color: red;">Erreur de chargement: ' + err.message + '</p>';
+            }
+        }
+
+        function displayOrders(orders) {
+            const list = document.getElementById('ordersList');
+            
+            if (orders.length === 0) {
+                list.innerHTML = '<p>Aucune commande trouvée.</p>';
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            const header = table.insertRow();
+            header.innerHTML = `
+                <th>ID</th>
+                <th>Client</th>
+                <th>Email</th>
+                <th>Téléphone</th>
+                <th>Total</th>
+                <th>Statut</th>
+                <th>Date</th>
+                <th>Actions</th>
+            `;
+            
+            orders.forEach(order => {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td>${order.id.substring(0, 8)}...</td>
+                    <td>${order.customerName || 'N/A'}</td>
+                    <td>${order.email || 'N/A'}</td>
+                    <td>${order.customerPhone || 'N/A'}</td>
+                    <td>${order.total || '0'} MAD</td>
+                    <td>
+                        <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
+                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>En attente</option>
+                            <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmée</option>
+                            <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Expédiée</option>
+                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Livrée</option>
+                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Annulée</option>
+                        </select>
+                    </td>
+                    <td>${order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('fr-FR') : 'N/A'}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteOrder('${order.id}')">Supprimer</button>
+                    </td>
+                `;
+            });
+            
+            list.innerHTML = '';
+            list.appendChild(table);
+        }
+
+        async function updateOrderStatus(orderId, newStatus) {
+            try {
+                await db.collection('orders').doc(orderId).update({
+                    status: newStatus,
+                    updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                addDebugInfo(`Statut commande ${orderId} mis à jour -> ${newStatus}`);
+            } catch(err) {
+                addDebugInfo('Erreur mise à jour statut: ' + err.message);
+            }
+        }
+
+        async function deleteOrder(orderId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer cette commande?')) return;
+            
+            try {
+                await db.collection('orders').doc(orderId).delete();
+                addDebugInfo('Commande supprimée: ' + orderId);
+                loadOrders();
+            } catch(err) {
+                addDebugInfo('Erreur suppression commande: ' + err.message);
+            }
+        }
+
+        // ========== COMMENTS MANAGEMENT ==========
+        async function loadComments() {
+            try {
+                const snapshot = await db.collection('comments').orderBy('createdAt', 'desc').get();
+                const comments = [];
+                
+                snapshot.forEach(doc => {
+                    comments.push({
+                        id: doc.id,
+                        ...doc.data()
+                    });
+                });
+                
+                displayComments(comments);
+            } catch(err) {
+                document.getElementById('commentsList').innerHTML = '<p style="color: red;">Erreur de chargement: ' + err.message + '</p>';
+            }
+        }
+
+        function displayComments(comments) {
+            const list = document.getElementById('commentsList');
+            
+            if (comments.length === 0) {
+                list.innerHTML = '<p>Aucun commentaire trouvé.</p>';
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            const header = table.insertRow();
+            header.innerHTML = `
+                <th>Nom</th>
+                <th>Email</th>
+                <th>Message</th>
+                <th>Note</th>
+                <th>Date</th>
+                <th>Actions</th>
+            `;
+            
+            comments.forEach(comment => {
+                const row = table.insertRow();
+                const ratingStars = comment.rating ? '★'.repeat(comment.rating) + '☆'.repeat(5-comment.rating) : 'N/A';
+                
+                row.innerHTML = `
+                    <td>${comment.name || 'N/A'}</td>
+                    <td>${comment.email || 'N/A'}</td>
+                    <td style="max-width: 300px;">${comment.message || 'N/A'}</td>
+                    <td>${ratingStars}</td>
+                    <td>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleDateString('fr-FR') : 'N/A'}</td>
+                    <td>
+                        <button class="delete-btn" onclick="deleteComment('${comment.id}')">Supprimer</button>
+                    </td>
+                `;
+            });
+            
+            list.innerHTML = '';
+            list.appendChild(table);
+        }
+
+        async function deleteComment(commentId) {
+            if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire?')) return;
+            
+            try {
+                await db.collection('comments').doc(commentId).delete();
+                addDebugInfo('Commentaire supprimé: ' + commentId);
+                loadComments();
+            } catch(err) {
+                addDebugInfo('Erreur suppression commentaire: ' + err.message);
+            }
+        }
+
+        // ========== DASHBOARD MANAGEMENT ==========
+        async function loadDashboard() {
+            try {
+                const productsSnapshot = await db.collection('products').get();
+                const ordersSnapshot = await db.collection('orders').get();
+                const commentsSnapshot = await db.collection('comments').get();
+                
+                document.getElementById('productsCount').textContent = productsSnapshot.size;
+                document.getElementById('ordersCount').textContent = ordersSnapshot.size;
+                document.getElementById('commentsCount').textContent = commentsSnapshot.size;
+                
+                let revenue = 0;
+                ordersSnapshot.forEach(doc => {
+                    const order = doc.data();
+                    if (order.total) {
+                        revenue += parseFloat(order.total);
+                    }
+                });
+                document.getElementById('revenueCount').textContent = revenue.toFixed(2);
+                
+                // Load recent data
+                const recentOrders = await db.collection('orders')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+                
+                const recentOrdersData = [];
+                recentOrders.forEach(doc => {
+                    recentOrdersData.push({ id: doc.id, ...doc.data() });
+                });
+                displayRecentOrders(recentOrdersData);
+                
+                const recentComments = await db.collection('comments')
+                    .orderBy('createdAt', 'desc')
+                    .limit(5)
+                    .get();
+                
+                const recentCommentsData = [];
+                recentComments.forEach(doc => {
+                    recentCommentsData.push({ id: doc.id, ...doc.data() });
+                });
+                displayRecentComments(recentCommentsData);
+                
+            } catch(err) {
+                addDebugInfo('Erreur chargement dashboard: ' + err.message);
+            }
+        }
+
+        function displayRecentOrders(orders) {
+            const container = document.getElementById('recentOrders');
+            
+            if (orders.length === 0) {
+                container.innerHTML = '<p>Aucune commande récente.</p>';
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            const header = table.insertRow();
+            header.innerHTML = `
+                <th>Client</th>
+                <th>Total</th>
+                <th>Statut</th>
+                <th>Date</th>
+            `;
+            
+            orders.forEach(order => {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td>${order.customerName || 'N/A'}</td>
+                    <td>${order.total || '0'} MAD</td>
+                    <td>${order.status || 'N/A'}</td>
+                    <td>${order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('fr-FR') : 'N/A'}</td>
+                `;
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
+        function displayRecentComments(comments) {
+            const container = document.getElementById('recentComments');
+            
+            if (comments.length === 0) {
+                container.innerHTML = '<p>Aucun commentaire récent.</p>';
+                return;
+            }
+            
+            const table = document.createElement('table');
+            table.className = 'data-table';
+            
+            const header = table.insertRow();
+            header.innerHTML = `
+                <th>Nom</th>
+                <th>Message</th>
+                <th>Date</th>
+            `;
+            
+            comments.forEach(comment => {
+                const row = table.insertRow();
+                row.innerHTML = `
+                    <td>${comment.name || 'N/A'}</td>
+                    <td>${comment.message ? (comment.message.substring(0, 50) + (comment.message.length > 50 ? '...' : '')) : 'N/A'}</td>
+                    <td>${comment.createdAt ? new Date(comment.createdAt.toDate()).toLocaleDateString('fr-FR') : 'N/A'}</td>
+                `;
+            });
+            
+            container.innerHTML = '';
+            container.appendChild(table);
+        }
+
+        // ========== AUTH STATE OBSERVER ==========
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                document.getElementById('authSection').classList.add('hidden');
+                document.getElementById('adminPanel').classList.remove('hidden');
+                document.getElementById('userEmail').textContent = user.email;
+                addDebugInfo('Utilisateur connecté: ' + user.email);
+                
+                loadDashboard();
+                loadProducts();
+            } else {
+                document.getElementById('authSection').classList.remove('hidden');
+                document.getElementById('adminPanel').classList.add('hidden');
+                addDebugInfo('Utilisateur déconnecté');
+            }
+        });
+    </script>
 </body>
 </html>
