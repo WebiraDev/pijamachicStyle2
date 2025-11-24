@@ -178,106 +178,95 @@
         <pre id="debug"></pre>
     </div>
 </div>
-
 <script>
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzieBAtDMxVtc293ohRES-CxupUigCcbXroOLWYVCH3V_1-xLbfxGj5V4kILK_laqHi/exec"; // Replace with your Web App URL
+// Google Sheets API Configuration
+const SHEET_ID = '1O8E8_Ju_IjeMc9qIHxmCi0Nm3_3vtD4rkKP5DkiDj90'; // Get from your sheet URL
+const API_KEY = 'AIzaSyCDpp1kxzhLS4ByMpm526_ojfFsa-hvcnc';
 
-// Tab navigation
-function openTab(tabName) {
-    // Hide all tab content
-    const tabContents = document.getElementsByClassName('tab-content');
-    for (let i = 0; i < tabContents.length; i++) {
-        tabContents[i].classList.remove('active');
-    }
-    
-    // Remove active class from all tab buttons
-    const tabButtons = document.getElementsByClassName('tab-button');
-    for (let i = 0; i < tabButtons.length; i++) {
-        tabButtons[i].classList.remove('active');
-    }
-    
-    // Show the specific tab content
-    document.getElementById(tabName).classList.add('active');
-    
-    // Add active class to the button that opened the tab
-    event.currentTarget.classList.add('active');
-    
-    // Load data for the selected tab
-    if (tabName === 'orders') {
-        loadOrders();
-    } else if (tabName === 'comments') {
-        loadComments();
-    }
-}
+// Sheet names and ranges
+const PRODUCTS_SHEET = 'PijamaChic Products';
+const ORDERS_SHEET = 'orders';
+const COMMENTS_SHEET = 'comments';
 
-// Helper function: convert File to Base64
-function toBase64(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => {
-            // Remove the "data:*/*;base64," part
-            const base64Data = reader.result.split(',')[1];
-            resolve(base64Data);
-        };
-        reader.onerror = error => reject(error);
-    });
-}
+// Base URL for Sheets API
+const SHEETS_API_BASE = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}`;
 
 // --- LOAD PRODUCTS ---
-async function loadProducts(){
+async function loadProducts() {
     try {
-        addDebugInfo('Chargement des produits...');
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getProducts`);
-        const result = await response.json();
-        if(result.success && result.data){
-            addDebugInfo(`${result.data.length} produits chargés`);
-            const list = document.getElementById('productsList');
-            list.innerHTML = '';
-            
-            if (result.data.length === 0) {
-                list.innerHTML = '<p>Aucun produit trouvé.</p>';
-                return;
-            }
-            
-            const table = document.createElement('table');
-            table.className = 'data-table';
-            
-            // Create table header
-            const header = table.insertRow();
-            header.innerHTML = `
-                <th>Image</th>
-                <th>Nom</th>
-                <th>Prix</th>
-                <th>Catégorie</th>
-                <th>Collection</th>
-                <th>Actions</th>
-            `;
-            
-            // Add products to table
-            result.data.forEach(p => {
-                const row = table.insertRow();
-                row.innerHTML = `
-                    <td><img src="${p.image}" class="product-image" alt="${p.name}"></td>
-                    <td>${p.name}</td>
-                    <td>${p.price} MAD</td>
-                    <td>${p.category}</td>
-                    <td>${p.collection}</td>
-                    <td>
-                        <button class="delete-btn" onclick="deleteProduct('${p.id}')">Supprimer</button>
-                    </td>
-                `;
-            });
-            
-            list.appendChild(table);
+        addDebugInfo('Chargement des produits via Sheets API...');
+        
+        const response = await fetch(`${SHEETS_API_BASE}/values/${PRODUCTS_SHEET}?key=${API_KEY}`);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-    } catch(err){
+        
+        const data = await response.json();
+        
+        if (data.values && data.values.length > 1) {
+            const products = data.values.slice(1).map(row => ({
+                date_added: row[0],
+                id: row[1],
+                name: row[2],
+                price: row[3],
+                category: row[4],
+                collection: row[5],
+                description: row[6],
+                image: row[7]
+            }));
+            
+            addDebugInfo(`${products.length} produits chargés`);
+            displayProducts(products);
+        } else {
+            addDebugInfo('Aucun produit trouvé');
+            document.getElementById('productsList').innerHTML = '<p>Aucun produit trouvé.</p>';
+        }
+    } catch(err) {
         addDebugInfo('Erreur chargement produits: ' + err.message);
+        console.error('Error loading products:', err);
     }
+}
+
+// --- DISPLAY PRODUCTS ---
+function displayProducts(products) {
+    const list = document.getElementById('productsList');
+    list.innerHTML = '';
+    
+    const table = document.createElement('table');
+    table.className = 'data-table';
+    
+    // Create table header
+    const header = table.insertRow();
+    header.innerHTML = `
+        <th>Image</th>
+        <th>Nom</th>
+        <th>Prix</th>
+        <th>Catégorie</th>
+        <th>Collection</th>
+        <th>Actions</th>
+    `;
+    
+    // Add products to table
+    products.forEach(p => {
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td><img src="${p.image}" class="product-image" alt="${p.name}"></td>
+            <td>${p.name}</td>
+            <td>${p.price} MAD</td>
+            <td>${p.category}</td>
+            <td>${p.collection}</td>
+            <td>
+                <button class="delete-btn" onclick="deleteProduct('${p.id}')">Supprimer</button>
+            </td>
+        `;
+    });
+    
+    list.appendChild(table);
 }
 
 // --- ADD PRODUCT ---
-async function addProduct(){
+async function addProduct() {
     try {
         const id = document.getElementById('productId').value;
         const name = document.getElementById('productName').value;
@@ -287,290 +276,309 @@ async function addProduct(){
         const description = document.getElementById('productDescription').value;
         const file = document.getElementById('productImage').files[0];
 
-        if(!file){
+        if (!file) {
             alert('Veuillez choisir une image');
             return;
         }
 
-        if(file.size > 100 * 1024 * 1024){
-            alert('Fichier trop gros (max 100 MB)');
+        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+            alert('Fichier trop gros (max 10 MB)');
             return;
         }
 
-        addDebugInfo(`Fichier sélectionné: ${file.name}, taille: ${file.size} bytes, type: ${file.type}`);
+        addDebugInfo(`Traitement de l'image: ${file.name}`);
 
+        // Upload image to Google Drive first
+        const imageUrl = await uploadImageToDrive(file);
+        
+        if (!imageUrl) {
+            alert('Erreur lors du téléchargement de l\'image');
+            return;
+        }
+
+        // Prepare product data
+        const productData = [
+            new Date().toISOString(),
+            id,
+            name,
+            price,
+            category,
+            collection,
+            description,
+            imageUrl
+        ];
+
+        // Append to Google Sheet
+        const response = await fetch(`${SHEETS_API_BASE}/values/${PRODUCTS_SHEET}!A:A:append?valueInputOption=RAW&key=${API_KEY}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                values: [productData]
+            })
+        });
+
+        if (response.ok) {
+            addDebugInfo('Produit ajouté avec succès');
+            
+            // Clear form
+            document.getElementById('productId').value = '';
+            document.getElementById('productName').value = '';
+            document.getElementById('productPrice').value = '';
+            document.getElementById('productCategory').value = '';
+            document.getElementById('productCollection').value = '';
+            document.getElementById('productDescription').value = '';
+            document.getElementById('productImage').value = '';
+            
+            // Reload products
+            loadProducts();
+        } else {
+            throw new Error('Erreur lors de l\'ajout du produit');
+        }
+
+    } catch(err) {
+        addDebugInfo('Erreur: ' + err.message);
+        console.error('Error adding product:', err);
+    }
+}
+const IMAGE_FOLDER_ID = '1YK-01Y1WkQ6SK5zO41ioJY1BVgisnHlU';
+
+function doPost(e) {
+  try {
+    const data = JSON.parse(e.postData.contents);
+    
+    if(data.action === 'uploadImage') {
+      const blob = Utilities.newBlob(Utilities.base64Decode(data.imageBlobBase64.split(",")[1]), data.imageMimeType, data.imageName);
+      const file = DriveApp.getFolderById(IMAGE_FOLDER_ID).createFile(blob);
+      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+      
+      return ContentService.createTextOutput(JSON.stringify({
+        success: true,
+        imageUrl: file.getUrl()
+      })).setMimeType(ContentService.MimeType.JSON);
+    }
+    
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      message: err.message
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+// --- UPLOAD IMAGE TO DRIVE ---
+async function uploadImageToDrive(file) {
+    // For now, we'll keep using Google Apps Script for image upload
+    // but only for this specific function
+    const UPLOAD_SCRIPT_URL = 'YOUR_APPS_SCRIPT_UPLOAD_URL'; // Keep only upload function
+    
+    return new Promise((resolve) => {
         const reader = new FileReader();
-        reader.onload = async function(e){
-            const base64 = e.target.result;
-            addDebugInfo(`Image convertie en base64, taille: ${base64.length} caractères`);
+        reader.onload = async function(e) {
+            try {
+                const base64 = e.target.result;
+                const payload = {
+                    action: 'uploadImage',
+                    imageBlobBase64: base64,
+                    imageMimeType: file.type,
+                    imageName: file.name
+                };
 
-            const payload = {
-                action: 'addProduct',
-                id, name, price, category, collection, description,
-                imageBlobBase64: base64,
-                imageMimeType: file.type,
-                imageName: file.name
-            };
+                const response = await fetch(UPLOAD_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(payload)
+                });
 
-            addDebugInfo('Début de l\'ajout du produit...');
-            const response = await fetch(GOOGLE_SCRIPT_URL, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-            if(result.success){
-                addDebugInfo('Produit ajouté avec succès');
-                // Clear form
-                document.getElementById('productId').value = '';
-                document.getElementById('productName').value = '';
-                document.getElementById('productPrice').value = '';
-                document.getElementById('productCategory').value = '';
-                document.getElementById('productCollection').value = '';
-                document.getElementById('productDescription').value = '';
-                document.getElementById('productImage').value = '';
-                
-                loadProducts();
-            } else {
-                addDebugInfo('Erreur ajout produit: ' + result.message);
+                const result = await response.json();
+                if (result.success) {
+                    resolve(result.imageUrl);
+                } else {
+                    resolve(null);
+                }
+            } catch (error) {
+                console.error('Upload error:', error);
+                resolve(null);
             }
         };
         reader.readAsDataURL(file);
-
-    } catch(err){
-        addDebugInfo('Erreur: ' + err.message);
-    }
-}
-
-// --- DELETE PRODUCT ---
-async function deleteProduct(productId){
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) {
-        return;
-    }
-    
-    try {
-        const payload = {action: 'deleteProduct', productId};
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-        if(result.success){
-            addDebugInfo('Produit supprimé');
-            loadProducts();
-        } else {
-            addDebugInfo('Erreur suppression produit');
-        }
-    } catch(err){
-        addDebugInfo('Erreur suppression produit: ' + err.message);
-    }
+    });
 }
 
 // --- LOAD ORDERS ---
-async function loadOrders(){
+async function loadOrders() {
     try {
         addDebugInfo('Chargement des commandes...');
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getOrders`);
-        const result = await response.json();
-        if(result.success && result.data){
-            addDebugInfo(`${result.data.length} commandes chargées`);
-            const list = document.getElementById('ordersList');
-            list.innerHTML = '';
-            
-            if (result.data.length === 0) {
-                list.innerHTML = '<p>Aucune commande trouvée.</p>';
-                return;
-            }
-            
-            const table = document.createElement('table');
-            table.className = 'data-table';
-            
-            // Create table header
-            const header = table.insertRow();
-            header.innerHTML = `
-                <th>ID Commande</th>
-                <th>Client</th>
-                <th>Email</th>
-                <th>Produits</th>
-                <th>Total</th>
-                <th>Statut</th>
-                <th>Date</th>
-                <th>Actions</th>
-            `;
-            
-            // Add orders to table
-            result.data.forEach(order => {
-                const row = table.insertRow();
-                
-                // Format products list
-                let productsHtml = '';
-                if (order.products && Array.isArray(order.products)) {
-                    productsHtml = '<ul>';
-                    order.products.forEach(product => {
-                        productsHtml += `<li>${product.name} (x${product.quantity}) - ${product.price} MAD</li>`;
-                    });
-                    productsHtml += '</ul>';
-                } else {
-                    productsHtml = 'N/A';
+        const response = await fetch(`${SHEETS_API_BASE}/values/${ORDERS_SHEET}?key=${API_KEY}`);
+        const data = await response.json();
+        
+        if (data.values && data.values.length > 1) {
+            const orders = data.values.slice(1).map(row => {
+                try {
+                    const products = typeof row[5] === 'string' ? JSON.parse(row[5]) : row[5];
+                    return {
+                        date: row[0],
+                        id: row[1],
+                        customerName: row[2],
+                        email: row[3],
+                        customerPhone: row[4],
+                        products: products,
+                        total: row[6],
+                        address: row[7],
+                        status: row[8] || 'pending'
+                    };
+                } catch (e) {
+                    return {
+                        date: row[0],
+                        id: row[1],
+                        customerName: row[2],
+                        email: row[3],
+                        customerPhone: row[4],
+                        products: [],
+                        total: row[6],
+                        address: row[7],
+                        status: row[8] || 'pending'
+                    };
                 }
-                
-                row.innerHTML = `
-                    <td>${order.id || 'N/A'}</td>
-                    <td>${order.customerName || 'N/A'}</td>
-                    <td>${order.email || 'N/A'}</td>
-                    <td>${productsHtml}</td>
-                    <td>${order.total || 'N/A'} MAD</td>
-                    <td>
-                        <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
-                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>En attente</option>
-                            <option value="processing" ${order.status === 'processing' ? 'selected' : ''}>En traitement</option>
-                            <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Expédiée</option>
-                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Livrée</option>
-                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Annulée</option>
-                        </select>
-                    </td>
-                    <td>${order.date || 'N/A'}</td>
-                    <td>
-                        <button class="delete-btn" onclick="deleteOrder('${order.id}')">Supprimer</button>
-                    </td>
-                `;
             });
             
-            list.appendChild(table);
+            addDebugInfo(`${orders.length} commandes chargées`);
+            displayOrders(orders);
+        } else {
+            document.getElementById('ordersList').innerHTML = '<p>Aucune commande trouvée.</p>';
         }
-    } catch(err){
+    } catch(err) {
         addDebugInfo('Erreur chargement commandes: ' + err.message);
     }
 }
 
-// --- UPDATE ORDER STATUS ---
-async function updateOrderStatus(orderId, newStatus) {
-    try {
-        addDebugInfo(`Mise à jour du statut de la commande ${orderId} vers: ${newStatus}`);
-        
-        const payload = {
-            action: 'updateOrderStatus',
-            orderId: orderId,
-            status: newStatus
-        };
-        
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-        
-        const result = await response.json();
-        if(result.success){
-            addDebugInfo('Statut de commande mis à jour avec succès');
-        } else {
-            addDebugInfo('Erreur mise à jour statut commande: ' + result.message);
-        }
-    } catch(err){
-        addDebugInfo('Erreur mise à jour statut commande: ' + err.message);
-    }
-}
-
-// --- DELETE ORDER ---
-async function deleteOrder(orderId){
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette commande?')) {
-        return;
-    }
-    
-    try {
-        const payload = {action: 'deleteOrder', orderId};
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-        if(result.success){
-            addDebugInfo('Commande supprimée');
-            loadOrders();
-        } else {
-            addDebugInfo('Erreur suppression commande');
-        }
-    } catch(err){
-        addDebugInfo('Erreur suppression commande: ' + err.message);
-    }
-}
-
 // --- LOAD COMMENTS ---
-async function loadComments(){
+async function loadComments() {
     try {
         addDebugInfo('Chargement des commentaires...');
-        const response = await fetch(`${GOOGLE_SCRIPT_URL}?action=getComments`);
-        const result = await response.json();
-        if(result.success && result.data){
-            addDebugInfo(`${result.data.length} commentaires chargés`);
-            const list = document.getElementById('commentsList');
-            list.innerHTML = '';
+        const response = await fetch(`${SHEETS_API_BASE}/values/${COMMENTS_SHEET}?key=${API_KEY}`);
+        const data = await response.json();
+        
+        if (data.values && data.values.length > 1) {
+            const comments = data.values.slice(1).map(row => ({
+                date: row[0],
+                id: row[1],
+                name: row[2],
+                email: row[3],
+                message: row[4],
+                rating: row[5],
+                productId: row[6]
+            }));
             
-            if (result.data.length === 0) {
-                list.innerHTML = '<p>Aucun commentaire trouvé.</p>';
-                return;
-            }
-            
-            const table = document.createElement('table');
-            table.className = 'data-table';
-            
-            // Create table header
-            const header = table.insertRow();
-            header.innerHTML = `
-                <th>Nom</th>
-                <th>Email</th>
-                <th>Message</th>
-                <th>Date</th>
-                <th>Actions</th>
-            `;
-            
-            // Add comments to table
-            result.data.forEach(comment => {
-                const row = table.insertRow();
-                row.innerHTML = `
-                    <td>${comment.name || 'N/A'}</td>
-                    <td>${comment.email || 'N/A'}</td>
-                    <td>${comment.message || 'N/A'}</td>
-                    <td>${comment.date || 'N/A'}</td>
-                    <td>
-                        <button class="delete-btn" onclick="deleteComment('${comment.id}')">Supprimer</button>
-                    </td>
-                `;
-            });
-            
-            list.appendChild(table);
+            addDebugInfo(`${comments.length} commentaires chargés`);
+            displayComments(comments);
+        } else {
+            document.getElementById('commentsList').innerHTML = '<p>Aucun commentaire trouvé.</p>';
         }
-    } catch(err){
+    } catch(err) {
         addDebugInfo('Erreur chargement commentaires: ' + err.message);
     }
 }
 
-// --- DELETE COMMENT ---
-async function deleteComment(commentId){
-    if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire?')) {
-        return;
-    }
+// --- DISPLAY ORDERS ---
+function displayOrders(orders) {
+    const list = document.getElementById('ordersList');
+    list.innerHTML = '';
     
-    try {
-        const payload = {action: 'deleteComment', commentId};
-        const response = await fetch(GOOGLE_SCRIPT_URL, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-        if(result.success){
-            addDebugInfo('Commentaire supprimé');
-            loadComments();
-        } else {
-            addDebugInfo('Erreur suppression commentaire');
+    const table = document.createElement('table');
+    table.className = 'data-table';
+    
+    const header = table.insertRow();
+    header.innerHTML = `
+        <th>ID Commande</th>
+        <th>Client</th>
+        <th>Email</th>
+        <th>Produits</th>
+        <th>Total</th>
+        <th>Statut</th>
+        <th>Date</th>
+        <th>Actions</th>
+    `;
+    
+    orders.forEach(order => {
+        const row = table.insertRow();
+        let productsHtml = '';
+        
+        if (order.products && Array.isArray(order.products)) {
+            productsHtml = '<ul>';
+            order.products.forEach(product => {
+                productsHtml += `<li>${product.name} (x${product.quantity}) - ${product.price} MAD</li>`;
+            });
+            productsHtml += '</ul>';
         }
-    } catch(err){
-        addDebugInfo('Erreur suppression commentaire: ' + err.message);
-    }
+        
+        row.innerHTML = `
+            <td>${order.id || 'N/A'}</td>
+            <td>${order.customerName || 'N/A'}</td>
+            <td>${order.email || 'N/A'}</td>
+            <td>${productsHtml}</td>
+            <td>${order.total || 'N/A'} MAD</td>
+            <td>${order.status || 'pending'}</td>
+            <td>${order.date || 'N/A'}</td>
+            <td>
+                <button class="delete-btn" onclick="deleteOrder('${order.id}')">Supprimer</button>
+            </td>
+        `;
+    });
+    
+    list.appendChild(table);
+}
+
+// --- DISPLAY COMMENTS ---
+function displayComments(comments) {
+    const list = document.getElementById('commentsList');
+    list.innerHTML = '';
+    
+    const table = document.createElement('table');
+    table.className = 'data-table';
+    
+    const header = table.insertRow();
+    header.innerHTML = `
+        <th>Nom</th>
+        <th>Email</th>
+        <th>Message</th>
+        <th>Date</th>
+        <th>Actions</th>
+    `;
+    
+    comments.forEach(comment => {
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td>${comment.name || 'N/A'}</td>
+            <td>${comment.email || 'N/A'}</td>
+            <td>${comment.message || 'N/A'}</td>
+            <td>${comment.date || 'N/A'}</td>
+            <td>
+                <button class="delete-btn" onclick="deleteComment('${comment.id}')">Supprimer</button>
+            </td>
+        `;
+    });
+    
+    list.appendChild(table);
+}
+
+// --- DELETE FUNCTIONS ---
+async function deleteProduct(productId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit?')) return;
+    
+    // For deletion, we might still need Apps Script or implement batch updates
+    addDebugInfo('Fonction de suppression à implémenter');
+    alert('Fonction de suppression à implémenter avec batch updates');
+}
+
+async function deleteOrder(orderId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cette commande?')) return;
+    addDebugInfo('Fonction de suppression commande à implémenter');
+}
+
+async function deleteComment(commentId) {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer ce commentaire?')) return;
+    addDebugInfo('Fonction de suppression commentaire à implémenter');
 }
 
 // --- DEBUG INFO ---
@@ -583,10 +591,12 @@ function addDebugInfo(message) {
 
 // --- INITIAL LOAD ---
 loadProducts();
+    
 </script>
 
 </body>
 </html>
+
 
 
 
