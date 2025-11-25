@@ -1522,37 +1522,39 @@ function displayOrders(orders) {
         }
 
         function displayRecentOrders(orders) {
-            const container = document.getElementById('recentOrders');
-            
-            if (orders.length === 0) {
-                container.innerHTML = '<p>Aucune commande récente.</p>';
-                return;
-            }
-            
-            const table = document.createElement('table');
-            table.className = 'data-table';
-            
-            const header = table.insertRow();
-            header.innerHTML = `
-                <th>Client</th>
-                <th>Total</th>
-                <th>Statut</th>
-                <th>Date</th>
-            `;
-            
-            orders.forEach(order => {
-                const row = table.insertRow();
-                row.innerHTML = `
-                    <td>${order.customerName || 'N/A'}</td>
-                    <td>${order.total || '0'} MAD</td>
-                    <td>${order.status || 'N/A'}</td>
-                    <td>${order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('fr-FR') : 'N/A'}</td>
-                `;
-            });
-            
-            container.innerHTML = '';
-            container.appendChild(table);
-        }
+    const container = document.getElementById('recentOrders');
+    
+    if (orders.length === 0) {
+        container.innerHTML = '<p>Aucune commande récente.</p>';
+        return;
+    }
+    
+    const table = document.createElement('table');
+    table.className = 'data-table';
+    
+    const header = table.insertRow();
+    header.innerHTML = `
+        <th>Client</th>
+        <th>Adresse</th>
+        <th>Total</th>
+        <th>Statut</th>
+        <th>Date</th>
+    `;
+    
+    orders.forEach(order => {
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td>${order.customerName || 'N/A'}</td>
+            <td style="max-width: 150px;">${order.address ? (order.address.substring(0, 30) + (order.address.length > 30 ? '...' : '')) : 'N/A'}</td>
+            <td>${order.total || '0'} MAD</td>
+            <td>${order.status || 'N/A'}</td>
+            <td>${order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('fr-FR') : 'N/A'}</td>
+        `;
+    });
+    
+    container.innerHTML = '';
+    container.appendChild(table);
+}
 
         function displayRecentContactMessages(messages) {
             const container = document.getElementById('recentContactMessages');
@@ -1613,4 +1615,5 @@ function displayOrders(orders) {
     </script>
 </body>
 </html>
+
 
