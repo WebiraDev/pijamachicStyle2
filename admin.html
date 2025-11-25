@@ -1143,74 +1143,75 @@
         }
 
         // ========== ORDERS MANAGEMENT ==========
-        async function loadOrders() {
-            try {
-                const snapshot = await db.collection('orders').orderBy('createdAt', 'desc').get();
-                const orders = [];
-                
-                snapshot.forEach(doc => {
-                    orders.push({
-                        id: doc.id,
-                        ...doc.data()
-                    });
-                });
-                
-                displayOrders(orders);
-            } catch(err) {
-                document.getElementById('ordersList').innerHTML = '<p style="color: red;">Erreur de chargement: ' + err.message + '</p>';
-            }
-        }
-
-        function displayOrders(orders) {
-            const list = document.getElementById('ordersList');
-            
-            if (orders.length === 0) {
-                list.innerHTML = '<p>Aucune commande trouvée.</p>';
-                return;
-            }
-            
-            const table = document.createElement('table');
-            table.className = 'data-table';
-            
-            const header = table.insertRow();
-            header.innerHTML = `
-                <th>ID</th>
-                <th>Client</th>
-                <th>Email</th>
-                <th>Téléphone</th>
-                <th>Total</th>
-                <th>Statut</th>
-                <th>Date</th>
-                <th>Actions</th>
-            `;
-            
-            orders.forEach(order => {
-                const row = table.insertRow();
-                row.innerHTML = `
-                    <td>${order.id.substring(0, 8)}...</td>
-                    <td>${order.customerName || 'N/A'}</td>
-                    <td>${order.email || 'N/A'}</td>
-                    <td>${order.customerPhone || 'N/A'}</td>
-                    <td>${order.total || '0'} MAD</td>
-                    <td>
-                        <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
-                            <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>En attente</option>
-                            <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmée</option>
-                            <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Expédiée</option>
-                            <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Livrée</option>
-                            <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Annulée</option>
-                        </select>
-                    </td>
-                    <td>${order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('fr-FR') : 'N/A'}</td>
-                    <td>
-                        <button class="delete-btn" onclick="deleteOrder('${order.id}')">Supprimer</button>
-                    </td>
-                `;
+        // ========== ORDERS MANAGEMENT ==========
+async function loadOrders() {
+    try {
+        const snapshot = await db.collection('orders').orderBy('createdAt', 'desc').get();
+        const orders = [];
+        
+        snapshot.forEach(doc => {
+            orders.push({
+                id: doc.id,
+                ...doc.data()
             });
-            
-            list.innerHTML = '';
-            list.appendChild(table);
-        }
+        });
+        
+        displayOrders(orders);
+    } catch(err) {
+        document.getElementById('ordersList').innerHTML = '<p style="color: red;">Erreur de chargement: ' + err.message + '</p>';
+    }
+}
+
+function displayOrders(orders) {
+    const list = document.getElementById('ordersList');
+    
+    if (orders.length === 0) {
+        list.innerHTML = '<p>Aucune commande trouvée.</p>';
+        return;
+    }
+    
+    const table = document.createElement('table');
+    table.className = 'data-table';
+    
+    const header = table.insertRow();
+    header.innerHTML = `
+        <th>ID</th>
+        <th>Client</th>
+        <th>Adresse</th>
+        <th>Téléphone</th>
+        <th>Total</th>
+        <th>Statut</th>
+        <th>Date</th>
+        <th>Actions</th>
+    `;
+    
+    orders.forEach(order => {
+        const row = table.insertRow();
+        row.innerHTML = `
+            <td>${order.id.substring(0, 8)}...</td>
+            <td>${order.customerName || 'N/A'}</td>
+            <td style="max-width: 200px;">${order.address || 'N/A'}</td>
+            <td>${order.customerPhone || 'N/A'}</td>
+            <td>${order.total || '0'} MAD</td>
+            <td>
+                <select class="status-select" onchange="updateOrderStatus('${order.id}', this.value)">
+                    <option value="pending" ${order.status === 'pending' ? 'selected' : ''}>En attente</option>
+                    <option value="confirmed" ${order.status === 'confirmed' ? 'selected' : ''}>Confirmée</option>
+                    <option value="shipped" ${order.status === 'shipped' ? 'selected' : ''}>Expédiée</option>
+                    <option value="delivered" ${order.status === 'delivered' ? 'selected' : ''}>Livrée</option>
+                    <option value="cancelled" ${order.status === 'cancelled' ? 'selected' : ''}>Annulée</option>
+                </select>
+            </td>
+            <td>${order.createdAt ? new Date(order.createdAt.toDate()).toLocaleDateString('fr-FR') : 'N/A'}</td>
+            <td>
+                <button class="delete-btn" onclick="deleteOrder('${order.id}')">Supprimer</button>
+            </td>
+        `;
+    });
+    
+    list.innerHTML = '';
+    list.appendChild(table);
+}
 
         async function updateOrderStatus(orderId, newStatus) {
             try {
@@ -1612,3 +1613,4 @@
     </script>
 </body>
 </html>
+
