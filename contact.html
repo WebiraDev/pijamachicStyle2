@@ -1579,7 +1579,23 @@ function removeFromCart(productId) {
         showNotification(`${removedItem.name} retiré du panier!`);
     }
 }
+      // Save contact message to Firebase
+async function saveContactMessageToFirebase(messageData) {
+    const message = {
+        name: messageData.name,
+        email: messageData.email,
+        phone: messageData.phone || '',
+        subject: messageData.subject,
+        message: messageData.message,
+        status: 'unread', // Important: This is used to filter in admin
+        createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    };
+    
+    // Save to Firebase - Make sure collection name matches
+    await db.collection('contactMessages').add(message);
+}
 </script>
 </body>
 
 </html>
+
